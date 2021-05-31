@@ -1,0 +1,44 @@
+import React from 'react'
+import {View, Text, StyleSheet, Button} from 'react-native'
+import{AuthContext} from '../components/context'
+import {DrawerItem, DrawerContentScrollView} from '@react-navigation/drawer'
+import { firebase } from '../src/firebase/config'
+import LoadingScreen from './LoadingScreen'
+import { CommonActions } from "@react-navigation/native";
+
+
+export default function DrawerContent(props) {
+
+    const [isLoading, setIsLoading] = React.useState(false)
+    const {signOutG} = React.useContext(AuthContext) //Get the signIn function from the AuthContext
+
+    const doSignOut = () => {
+        setIsLoading(true)
+        firebase
+        .auth()
+        .signOut()
+        .then((response) => {
+            signOutG()
+        })
+        .catch(function (err) {
+            alert(error)
+        })
+    }
+
+    //Render Loading Screen
+    if (isLoading) {
+        return <LoadingScreen/>
+    }
+
+    return (
+        
+        <View>
+            <DrawerContentScrollView {...props}>
+                <View>
+                    <Text>Hello</Text>
+                </View>
+            </DrawerContentScrollView>
+            <DrawerItem label="Sign Out" marginTop = {100} onPress={() => {doSignOut()}}/>
+        </View>
+    )
+}
