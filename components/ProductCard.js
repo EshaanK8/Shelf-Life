@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
         flex:2,
     },
     nameText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: "600",
         marginTop: "8%",
         marginLeft: "8%",

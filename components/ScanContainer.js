@@ -10,10 +10,8 @@ export default () => {
 
   return (
     <View style={styles.container}>
-      
-      
       <View style = {styles.scanContainer}>
-        <TouchableOpacity style={[styles.scanButton, styles.receiptButton]} onPress={() => navigation.push('ReceiptScannerScreen')}>
+        <TouchableOpacity style={[styles.scanButton, styles.receiptButton]} onPress={() => navigation.push('BarcodeScannerScreen')}>
           <View>
             <Text style = {styles.scanText}>Scan an item</Text>
           </View>
@@ -21,7 +19,7 @@ export default () => {
             <Ionicons name='barcode-outline' style = {styles.settingsIcon} size = {90}/>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style = {[styles.scanButton, styles.barcodeButton]} onPress={() => navigation.push('BarcodeScannerScreen')}>
+        <TouchableOpacity style = {[styles.scanButton, styles.barcodeButton]} onPress={() => navigation.push('ReceiptScannerScreen')}>
           <View>
             <Text style = {styles.scanText}>Scan your receipt</Text>
           </View>
@@ -40,7 +38,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
-    height: Dimensions.get('window').height * 0.35
+    height: Dimensions.get('window').height * 0.22
   },
   scanContainer: {
     flex: 1,
@@ -86,14 +84,4 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row"
   },
-  welcomeTextContainer: {
-    flex:1,
-    paddingLeft: '5%',
-    paddingTop: '3%'
-  },
-  welcomeText: {
-    fontSize:20,
-    fontWeight:"700"
-  }
-
 });

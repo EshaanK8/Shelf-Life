@@ -1,5 +1,5 @@
 import React, {Component, useState} from 'react';
-import {StyleSheet,Text,View,Button, TouchableOpacity, FlatList, ScrollView, Dimensions} from 'react-native';
+import {StyleSheet,Text,View,Button, TouchableOpacity, FlatList, ScrollView, Dimensions, ActivityIndicator} from 'react-native';
 import Icon from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Constants from 'expo-constants';
@@ -14,15 +14,26 @@ export default ({navigation}) => {
     {name: "Milk", key: '1', dateAdded: 'June 22, 2021', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg'}, 
     {name: "Cheese", key: '2', dateAdded: 'June 22, 2021', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUZSdO4N-DM1hOYiMXsc2uDIKlIb1IZGNVaA&usqp=CAU'}, 
     {name: "Bread", key: '3', dateAdded: 'June 22, 2021', image: 'https://dempsters.ca/sites/default/files/styles/large/public/2021-02/excvpcx0pdpa5msj0m08.png?itok=qh-WSJIG'},
-    {name: "Bread", key: '4', dateAdded: 'June 22, 2021', image: 'https://dempsters.ca/sites/default/files/styles/large/public/2021-02/excvpcx0pdpa5msj0m08.png?itok=qh-WSJIG'},
+    {name: "Milk", key: '4', dateAdded: 'June 22, 2021', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg'}, 
+    {name: "Cheese", key: '5', dateAdded: 'June 22, 2021', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUZSdO4N-DM1hOYiMXsc2uDIKlIb1IZGNVaA&usqp=CAU'}, 
+    {name: "Bread", key: '6', dateAdded: 'June 22, 2021', image: 'https://dempsters.ca/sites/default/files/styles/large/public/2021-02/excvpcx0pdpa5msj0m08.png?itok=qh-WSJIG'},
+    {name: "Milk", key: '7', dateAdded: 'June 22, 2021', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg'}, 
+    {name: "Cheese", key: '8', dateAdded: 'June 22, 2021', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUZSdO4N-DM1hOYiMXsc2uDIKlIb1IZGNVaA&usqp=CAU'}, 
+    {name: "Bread", key: '9', dateAdded: 'June 22, 2021', image: 'https://dempsters.ca/sites/default/files/styles/large/public/2021-02/excvpcx0pdpa5msj0m08.png?itok=qh-WSJIG'},
   ]);
-  
+
+  const [refreshing, setRefreshing] = useState(false)
+
+  handleRefresh = () => {
+    setRefreshing(true)
+    setTimeout(function(){setRefreshing(false)}, 500);
+  }
   return (
 
-    <View style = {{paddingTop: Constants.statusBarHeight, backgroundColor: "white"}}>
+    <View style = {{paddingTop: Constants.statusBarHeight, backgroundColor: "white", flex: 1}}>
       <View style = {styles.headerContainer}>
         <View style = {styles.welcomeTextContainer}>
-          <Text style = {styles.welcomeText}>Good Evening</Text>
+          <Text style = {styles.welcomeText}>InventoryApp</Text>
         </View>
         <TouchableOpacity style = {styles.settingsContainer} onPress={() => navigation.push('SettingsScreen')}>
           <Icon name='player-settings' style = {styles.settingsIcon} size={25}/>
@@ -38,6 +49,8 @@ export default ({navigation}) => {
           return <ProductCard item = {item}/>
         }
       }}
+      refreshing = {refreshing}
+      onRefresh = {handleRefresh}
     />
     </View>
   )
@@ -92,10 +105,10 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   headerContainer: {
-    flexDirection: "row"
+    flexDirection: "row",
+    height: Dimensions.get('window').height * 0.07,
   },
   welcomeTextContainer: {
-    height: Dimensions.get('window').height * 0.08,
     paddingLeft: '5%',
     paddingTop: '3%'
   },
