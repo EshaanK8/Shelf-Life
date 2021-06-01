@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { Text, Card, Divider } from 'react-native-elements';
 import ItemsLeftPageScreen from '../screens/ItemsLeftPageScreen';
 import { useNavigation } from '@react-navigation/native';
@@ -29,9 +29,11 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         borderRadius:5,
         marginBottom: "5%",
-        height: 150,
         borderWidth:1,
         borderColor: "lightgrey",
+        height: Dimensions.get('window').height * 0.16,
+        marginLeft: "5%",
+        marginRight: "5%"
     },
     imageContainer: {
         flex:1,
