@@ -16,7 +16,7 @@ export default (props) => {
                 </View>
                 <View style ={styles.textContainer}>
                     <Text style = {styles.nameText}>{props.item.name}</Text>
-                    <Text style = {styles.dateText}>{props.item.dateAdded}</Text>
+                    <Text style = {styles.dateText}>{props.item.key}</Text>
                 </View>
             </View>
         </TouchableOpacity>

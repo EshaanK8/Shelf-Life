@@ -1,53 +1,132 @@
-import React, {Component, useState} from 'react';
-import {StyleSheet,Text,View,Button, TouchableOpacity, FlatList, ScrollView, Dimensions, ActivityIndicator} from 'react-native';
+import React, {Component, useState, useEffect} from 'react';
+import {StyleSheet,Text,View,Button, TouchableOpacity, TextInput, FlatList, ScrollView, Dimensions, ActivityIndicator} from 'react-native';
 import Icon from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Constants from 'expo-constants';
 import ProductCard from '../components/ProductCard';
 import ScanContainer from '../components/ScanContainer';
-
+import {userContext} from '../components/userContext.js';
+import { firebase } from '../src/firebase/config'
+//import {addProduct, getProducts, getUserFullData} from '../src/firebase/StorageApi'
 
 export default ({navigation}) => {
-
-  const [productData, setProductData] = useState([
-    {key: '0'},
-    {name: "Milk", key: '1', dateAdded: 'June 22, 2021', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg'}, 
-    {name: "Cheese", key: '2', dateAdded: 'June 22, 2021', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUZSdO4N-DM1hOYiMXsc2uDIKlIb1IZGNVaA&usqp=CAU'}, 
-    {name: "Bread", key: '3', dateAdded: 'June 22, 2021', image: 'https://dempsters.ca/sites/default/files/styles/large/public/2021-02/excvpcx0pdpa5msj0m08.png?itok=qh-WSJIG'},
-    {name: "Milk", key: '4', dateAdded: 'June 22, 2021', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg'}, 
-    {name: "Cheese", key: '5', dateAdded: 'June 22, 2021', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUZSdO4N-DM1hOYiMXsc2uDIKlIb1IZGNVaA&usqp=CAU'}, 
-    {name: "Bread", key: '6', dateAdded: 'June 22, 2021', image: 'https://dempsters.ca/sites/default/files/styles/large/public/2021-02/excvpcx0pdpa5msj0m08.png?itok=qh-WSJIG'},
-    {name: "Milk", key: '7', dateAdded: 'June 22, 2021', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg'}, 
-    {name: "Cheese", key: '8', dateAdded: 'June 22, 2021', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUZSdO4N-DM1hOYiMXsc2uDIKlIb1IZGNVaA&usqp=CAU'}, 
-    {name: "Bread", key: '9', dateAdded: 'June 22, 2021', image: 'https://dempsters.ca/sites/default/files/styles/large/public/2021-02/excvpcx0pdpa5msj0m08.png?itok=qh-WSJIG'},
+  const user = React.useContext(userContext)
+  const [userFullData, setUserFullData] = useState([])
+  const [productList, setProductList] = useState([
   ]);
-
   const [refreshing, setRefreshing] = useState(false)
 
+  //Product Storage
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [currentProductItem, setCurrentProductItem] = useState(null)
+
+  //--------------------------------Storage API functions-------------------------------//
+  const addProduct = (product, addComplete) => {
+    firebase.firestore()
+    .collection('users').doc(user).collection('products')
+    .add({
+        name: product.name,
+        key: product.key,
+        dateAdded:  firebase.firestore.FieldValue.serverTimestamp(),
+        image: product.image
+    }).then((snapshot) => snapshot.get())
+    .then((productData) => addComplete(productData.data()))
+    .catch((error) => console.log(error))
+  }
+
+  const getProducts = async(productsRetreived) => {
+      var productList = []
+      var snapshot = await firebase.firestore()
+      .collection('users').doc(user).collection('products')
+      .orderBy('dateAdded')
+      .get()
+
+      snapshot.forEach((doc) => {
+          productList.push(doc.data())
+      })
+
+      productsRetreived(productList)
+  }
+
+  const getUserFullData = async (dataRetreived) => {
+      var userFullData = null
+      const usersRef = firebase.firestore().collection('users')
+          usersRef
+              .doc(user)
+              .get()
+              .then(firestoreDocument => {
+                  if (!firestoreDocument.exists) {
+                      alert("User does not exist anymore.")
+                      return;
+                  }
+                  userFullData = firestoreDocument.data()
+                  dataRetreived(userFullData)
+              })
+              .catch(error => {
+                  setIsLoading(false)
+                  alert(error)
+              })
+  }
+  //--------------------------------------------------------------------------------//
+
+  
+  const onProductAdded = (product) => {
+    setProductList([...productList, product])
+  }
+
+  const onProductDeleted = () => {
+    var newProductList = [...productList]
+    newProductList.splice(selectedIndex, 1)
+    setProductList(newProductList)
+  }
+
+  const onProductsRecieved = (productList) => {
+    setProductList(productList)
+  }
+
+  const onUserFullDataRecieved = (userFullData) => {
+    setUserFullData(userFullData)
+  }
+
+  //Like componentDidMount
+  useEffect(() => {
+    getProducts(onProductsRecieved)
+    getUserFullData(onUserFullDataRecieved)
+  }, []);
   handleRefresh = () => {
     setRefreshing(true)
     setTimeout(function(){setRefreshing(false)}, 500);
   }
+
   return (
 
     <View style = {{paddingTop: Constants.statusBarHeight, backgroundColor: "white", flex: 1}}>
       <View style = {styles.headerContainer}>
         <View style = {styles.welcomeTextContainer}>
-          <Text style = {styles.welcomeText}>InventoryApp</Text>
+          {console.log(userFullData)}
+          <Text style = {styles.welcomeText}>Hello, {userFullData.fullName}</Text>
         </View>
         <TouchableOpacity style = {styles.settingsContainer} onPress={() => navigation.push('SettingsScreen')}>
           <Icon name='player-settings' style = {styles.settingsIcon} size={25}/>
         </TouchableOpacity>
       </View>
+      <TextInput
+        placeholder = "Add Product"
+        value={currentProductItem}
+        onChangeText = {(text) => setCurrentProductItem(text)}
+      />
+      <Button 
+        style = {{width: 200, height: 100}}
+        title='Submit' 
+        onPress = {() => 
+          addProduct({name: currentProductItem, key: 8, dateAdded: '03/02/21', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg' }, onProductAdded) 
+        }
+      />
       <FlatList
-      data={productData} 
+      ListHeaderComponent= {<ScanContainer/>}
+      data={productList} 
       renderItem={({item}) => {
-        if (item.key == "0") {
-          return <ScanContainer/>
-        }
-        else {
           return <ProductCard item = {item}/>
-        }
       }}
       refreshing = {refreshing}
       onRefresh = {handleRefresh}

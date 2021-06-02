@@ -11,7 +11,7 @@ import { default as theme } from './custom-theme.json'; // <-- Import app theme
 import { default as mapping } from './mapping.json'; // <-- Import app mapping
 
 import { CommonActions } from '@react-navigation/native';
-
+import { firebase } from './src/firebase/config'
 
 
 
@@ -32,6 +32,7 @@ import ProfileScreen from './screens/ProfileScreen'
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 import {AuthContext} from './components/context.js'
+import {userContext} from './components/userContext.js';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
@@ -76,11 +77,12 @@ export default () => {
 
   //State
   const [isLoading, setIsLoading] = React.useState(true)
-  //const [userToken, setUserToken] = React.useState(null)
+  //const [userId, setUserId] = useState('');
 
   const initialLoginState = {
     isLoading: true,
     signedIn: 'false',
+    userId: ''
   }
 
   //LoginReducer takes in the prevState and an action (either Retreieve_Token, Login, Logout, or Register). It changes the state according to the
@@ -97,18 +99,21 @@ export default () => {
           ...prevState,
           isLoading: false,
           signedIn:action.token,
+          userId:action.userIn
         }
       case 'SIGNIN':
         return {
           ...prevState,
           isLoading: false,
           signedIn:'true',
+          userId:action.userIn
         }
       case 'SIGNOUT':
         return {
           ...prevState,
           isLoading: false,
           signedIn:'false',
+          userId:action.userIn
         }
     }
   }
@@ -116,22 +121,43 @@ export default () => {
   //This is similar to useState(). It simply sets the initial state to initialLoginState and changes the state using the loginReducer function.
   const [loginState, dispatch] = React.useReducer(loginReducer, initialLoginState)
 
-
   const authContext = React.useMemo(() => ({
-
     signOutG: async() => {
       signedIn = 'false'
-      await AsyncStorage.setItem('signedIn', signedIn)
-      dispatch({type: 'SIGNOUT'})
+      userId = ''
+      try {
+        await AsyncStorage.setItem('signedIn', signedIn)
+        await AsyncStorage.setItem('userId', userId)
+      }
+      catch(error){
+        console.log(error)
+      }
+      
+      dispatch({type: 'SIGNOUT', userIn: userId})
     },
 
     signIn: async(userData) => {
+      console.log(userData.email)
       signedIn = 'true'
-      await AsyncStorage.setItem('signedIn', signedIn)
-      dispatch({type: 'SIGNIN'})
+      userId = userData.id
+      try {
+        await AsyncStorage.setItem('signedIn', signedIn)
+        await AsyncStorage.setItem('userId', userId)
+      }
+      catch(error){
+        console.log(error)
+      }
+     
+      dispatch({type: 'SIGNIN', userIn: userId})
     },
   }), [])
 
+  /*
+   // This code is for it to run whenever your variable, timerOn, changes
+   useEffect(() => {
+    console.log("Hello" + userId)
+  }, [userId]); // The second parameters are the variables this useEffect is listening to for changes.
+  */
   //Set time to login
   
   useEffect (() => {
@@ -139,13 +165,15 @@ export default () => {
     if (mounted){
     setTimeout(async() => {
       let userSignedIn = 'false'
+      let currentUser = ''
       try {
         userSignedIn = await AsyncStorage.getItem('signedIn')
+        currentUser = await AsyncStorage.getItem('userId')
       } catch(e) {
         console.log(e)
       }
       
-        dispatch({type: 'RETRIEVE_TOKEN', token: userSignedIn})
+        dispatch({type: 'RETRIEVE_TOKEN', token: userSignedIn, userIn: currentUser})
       
     },1000)
     return () => mounted = false;
@@ -162,20 +190,23 @@ export default () => {
   return (
     <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
       <AuthContext.Provider value= {authContext}>
-        <NavigationContainer>
-          {loginState.signedIn == 'true' ? (
-            <Tabs.Navigator>
-              <Tabs.Screen name= "InventoryScreen" component={InventoryStackScreen} options={{title: "Inventory", headerShown: false}}/>
-              <Tabs.Screen name= "PrevBoughtScreen" component={PrevBoughtStackScreen} options={{title: "Previously Bought", headerShown: false}}/>
-            </Tabs.Navigator>
-          ) 
-          :(
-            <AuthStack.Navigator initalRouteName = "LoginScreen" screenOptions={{ headerStyle: { backgroundColor: '#fff',elevation:0, borderBottomWidth: 0} }}>
-                <AuthStack.Screen name= "LoginScreen" component ={LoginScreen} options={{title: "Sign In", headerShown: false}}/>
-                <AuthStack.Screen name= "CreateAccountScreen"  component ={CreateAccountScreen} options={{title: ""}} />
-              </AuthStack.Navigator>
-          )}
-        </NavigationContainer>
+      <userContext.Provider value={loginState.userId}>
+        {console.log(loginState.userId)}
+          <NavigationContainer>
+            {((loginState.signedIn == 'true')&&(loginState.userId !==null))  ? (
+              <Tabs.Navigator>
+                <Tabs.Screen name= "InventoryScreen" component={InventoryStackScreen} options={{title: "Inventory", headerShown: false}}/>
+                <Tabs.Screen name= "PrevBoughtScreen" component={PrevBoughtStackScreen} options={{title: "Previously Bought", headerShown: false}}/>
+              </Tabs.Navigator>
+            ) 
+            :(
+              <AuthStack.Navigator initalRouteName = "LoginScreen" screenOptions={{ headerStyle: { backgroundColor: '#fff',elevation:0, borderBottomWidth: 0} }}>
+                  <AuthStack.Screen name= "LoginScreen" component ={LoginScreen} options={{title: "Sign In", headerShown: false}}/>
+                  <AuthStack.Screen name= "CreateAccountScreen"  component ={CreateAccountScreen} options={{title: ""}} />
+                </AuthStack.Navigator>
+            )}
+          </NavigationContainer>
+        </userContext.Provider>
       </AuthContext.Provider>
     </ApplicationProvider>
 
