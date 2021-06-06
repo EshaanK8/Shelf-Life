@@ -77,15 +77,6 @@ export default ({navigation}) => {
     setProductList(newList)
   }
   
-  const onProductAdded = (product) => {
-    setProductList([...productList, product])
-  }
-
-  const onProductDeleted = (product) => {
-    const newProductList = productList.filter(word => word.length > 6);
-    setProductList(newProductList)
-  }
-
   const onProductsRecieved = (productList) => {
     setProductList(productList)
   }

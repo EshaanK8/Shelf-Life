@@ -71,17 +71,10 @@ export default ({navigation}) => {
   }
   //--------------------------------------------------------------------------------//
 
+  const onListChange = (newList) => {
+    setProductList(newList)
+  }
   
-  const onProductAdded = (product) => {
-    setProductList([...productList, product])
-  }
-
-  const onProductDeleted = () => {
-    var newProductList = [...productList]
-    newProductList.splice(selectedIndex, 1)
-    setProductList(newProductList)
-  }
-
   const onProductsRecieved = (productList) => {
     setProductList(productList)
   }
@@ -119,7 +112,7 @@ export default ({navigation}) => {
       <FlatList
       data={productList} 
       renderItem={({item}) => {
-          return <ProductCard item = {item}/>
+          return <ProductCard item = {item} productList = {productList} onListChange={onListChange}/>
       }}
       refreshing = {refreshing}
       onRefresh = {handleRefresh}

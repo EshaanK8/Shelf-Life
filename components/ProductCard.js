@@ -58,7 +58,7 @@ export default (props) => {
     }
 
     const deletePrevProduct = () => {
-        firebase.firestore().collection('users').doc(user).collection('products').doc(props.item.id).delete().then(() => {
+        firebase.firestore().collection('users').doc(user).collection('prevProducts').doc(props.item.id).delete().then(() => {
             console.log("Document successfully deleted!");
         }).catch((error) => {
             console.error("Error removing document: ", error);
@@ -91,13 +91,14 @@ export default (props) => {
         }
 
         else {
-            if (amount > 0) {
+            if (amount > 1) {
                 setAmount(amount-1)
                 decreasePrevProduct()
             }
     
             else {
                 deletePrevProduct()
+                onProductDeleted()
             }
         }
         
