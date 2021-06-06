@@ -51,7 +51,6 @@ export default function LoginScreen({navigation}) {
                 }
                 const user = firestoreDocument.data()
                 signIn(user)
-                //console.log(user.id)
             })
             .catch(error => {
                 setIsLoading(false)

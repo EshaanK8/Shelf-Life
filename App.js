@@ -33,6 +33,7 @@ import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 import {AuthContext} from './components/context.js'
 import {userContext} from './components/userContext.js';
+import {CardContext} from './components/cardContext.js';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
@@ -191,21 +192,20 @@ export default () => {
     <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
       <AuthContext.Provider value= {authContext}>
       <userContext.Provider value={loginState.userId}>
-        {console.log(loginState.userId)}
-          <NavigationContainer>
-            {((loginState.signedIn == 'true')&&(loginState.userId !==null))  ? (
-              <Tabs.Navigator>
-                <Tabs.Screen name= "InventoryScreen" component={InventoryStackScreen} options={{title: "Inventory", headerShown: false}}/>
-                <Tabs.Screen name= "PrevBoughtScreen" component={PrevBoughtStackScreen} options={{title: "Previously Bought", headerShown: false}}/>
-              </Tabs.Navigator>
-            ) 
-            :(
-              <AuthStack.Navigator initalRouteName = "LoginScreen" screenOptions={{ headerStyle: { backgroundColor: '#fff',elevation:0, borderBottomWidth: 0} }}>
-                  <AuthStack.Screen name= "LoginScreen" component ={LoginScreen} options={{title: "Sign In", headerShown: false}}/>
-                  <AuthStack.Screen name= "CreateAccountScreen"  component ={CreateAccountScreen} options={{title: ""}} />
-                </AuthStack.Navigator>
-            )}
-          </NavigationContainer>
+            <NavigationContainer>
+              {((loginState.signedIn == 'true')&&(loginState.userId !==null))  ? (
+                <Tabs.Navigator>
+                  <Tabs.Screen name= "InventoryScreen" component={InventoryStackScreen} options={{title: "Inventory", headerShown: false}}/>
+                  <Tabs.Screen name= "PrevBoughtScreen" component={PrevBoughtStackScreen} options={{title: "Previously Bought", headerShown: false}}/>
+                </Tabs.Navigator>
+              ) 
+              :(
+                <AuthStack.Navigator initalRouteName = "LoginScreen" screenOptions={{ headerStyle: { backgroundColor: '#fff',elevation:0, borderBottomWidth: 0} }}>
+                    <AuthStack.Screen name= "LoginScreen" component ={LoginScreen} options={{title: "Sign In", headerShown: false}}/>
+                    <AuthStack.Screen name= "CreateAccountScreen"  component ={CreateAccountScreen} options={{title: ""}} />
+                  </AuthStack.Navigator>
+              )}
+            </NavigationContainer>
         </userContext.Provider>
       </AuthContext.Provider>
     </ApplicationProvider>

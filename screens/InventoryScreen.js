@@ -21,17 +21,21 @@ export default ({navigation}) => {
   const [currentProductItem, setCurrentProductItem] = useState(null)
 
   //--------------------------------Storage API functions-------------------------------//
-  const addProduct = (product, addComplete) => {
-    firebase.firestore()
-    .collection('users').doc(user).collection('products')
-    .add({
-        name: product.name,
-        key: product.key,
-        dateAdded:  firebase.firestore.FieldValue.serverTimestamp(),
-        image: product.image
-    }).then((snapshot) => snapshot.get())
-    .then((productData) => addComplete(productData.data()))
-    .catch((error) => console.log(error))
+  
+  function createDocument() {
+    return firebase.firestore().collection('users').doc(user).collection('products').doc()
+  }
+  const addProduct = (product, docRef) => {
+    docRef.set({
+      name: product.name,
+      id: product.id,
+      key: product.key,
+      dateAdded:  firebase.firestore.FieldValue.serverTimestamp(),
+      image: product.image,
+      amount: product.amount
+    })
+    console.log(product)
+    setProductList([...productList, product])
   }
 
   const getProducts = async(productsRetreived) => {
@@ -69,14 +73,16 @@ export default ({navigation}) => {
   }
   //--------------------------------------------------------------------------------//
 
+  const onListChange = (newList) => {
+    setProductList(newList)
+  }
   
   const onProductAdded = (product) => {
     setProductList([...productList, product])
   }
 
-  const onProductDeleted = () => {
-    var newProductList = [...productList]
-    newProductList.splice(selectedIndex, 1)
+  const onProductDeleted = (product) => {
+    const newProductList = productList.filter(word => word.length > 6);
     setProductList(newProductList)
   }
 
@@ -103,7 +109,6 @@ export default ({navigation}) => {
     <View style = {{paddingTop: Constants.statusBarHeight, backgroundColor: "white", flex: 1}}>
       <View style = {styles.headerContainer}>
         <View style = {styles.welcomeTextContainer}>
-          {console.log(userFullData)}
           <Text style = {styles.welcomeText}>Hello, {userFullData.fullName}</Text>
         </View>
         <TouchableOpacity style = {styles.settingsContainer} onPress={() => navigation.push('SettingsScreen')}>
@@ -118,15 +123,16 @@ export default ({navigation}) => {
       <Button 
         style = {{width: 200, height: 100}}
         title='Submit' 
-        onPress = {() => 
-          addProduct({name: currentProductItem, key: 8, dateAdded: '03/02/21', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg' }, onProductAdded) 
-        }
+        onPress = {() => {
+          var newDoc = createDocument()
+          addProduct({name: currentProductItem, key: 8, id: newDoc.id, amount: 1, dateAdded: '03/02/21', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg' }, newDoc) 
+        }}
       />
       <FlatList
       ListHeaderComponent= {<ScanContainer/>}
       data={productList} 
       renderItem={({item}) => {
-          return <ProductCard item = {item}/>
+          return <ProductCard item = {item} productList = {productList} onListChange={onListChange}/>
       }}
       refreshing = {refreshing}
       onRefresh = {handleRefresh}

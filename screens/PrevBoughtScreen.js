@@ -20,17 +20,20 @@ export default ({navigation}) => {
   const [currentProductItem, setCurrentProductItem] = useState(null)
 
   //--------------------------------Storage API functions-------------------------------//
-  const addPrevProduct = (product, addComplete) => {
-    firebase.firestore()
-    .collection('users').doc(user).collection('prevProducts')
-    .add({
-        name: product.name,
-        key: product.key,
-        dateAdded:  firebase.firestore.FieldValue.serverTimestamp(),
-        image: product.image
-    }).then((snapshot) => snapshot.get())
-    .then((productData) => addComplete(productData.data()))
-    .catch((error) => console.log(error))
+  function createDocument() {
+    return firebase.firestore().collection('users').doc(user).collection('prevProducts').doc()
+  }
+  const addPrevProduct = (product, docRef) => {
+    docRef.set({
+      name: product.name,
+      id: product.id,
+      key: product.key,
+      dateAdded:  firebase.firestore.FieldValue.serverTimestamp(),
+      image: product.image,
+      amount: product.amount
+    })
+    console.log(product)
+    setProductList([...productList, product])
   }
 
   const getPrevProducts = async(productsRetreived) => {
@@ -108,9 +111,10 @@ export default ({navigation}) => {
       <Button 
         style = {{width: 200, height: 100}}
         title='Submit' 
-        onPress = {() => 
-          addPrevProduct({name: currentProductItem, key: 8, dateAdded: '03/02/21', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg' }, onProductAdded) 
-        }
+        onPress = {() => {
+          var newDoc = createDocument()
+          addPrevProduct({name: currentProductItem, key: 8, id: newDoc.id, amount: 1, dateAdded: '03/02/21', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg' }, newDoc) 
+        }}
       />
       <FlatList
       data={productList} 
