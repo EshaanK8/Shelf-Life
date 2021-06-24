@@ -5,6 +5,9 @@ import Constants from 'expo-constants'
 import ProductResult from './ProductResult'
 import { Alert } from 'react-native';
 import { Button, Text } from '@ui-kitten/components';
+import {userContext} from '../components/userContext.js';
+import { firebase } from '../src/firebase/config'
+
 
 export default ({navigation}) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -12,7 +15,7 @@ export default ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState("");
   const [isLoading, setIsLoading] = useState("");
-  const [product, setProduct] = useState("");
+  const user = React.useContext(userContext)
 
   useEffect(() => {
     (async () => {
@@ -24,6 +27,11 @@ export default ({navigation}) => {
   const handleBarCodeScanned = ({ type, data }) => {
     setData(data)
     setScanned(true);
+    setIsLoading(true)
+    console.log(data)
+
+    setData(data)
+    setScanned(true);
     //check item
     let url = "https://world.openfoodfacts.org/api/v0/product/"+data+".json"
     setIsLoading(true)
@@ -32,54 +40,44 @@ export default ({navigation}) => {
     .then(res => res.json())
     .then(res => {
         setIsLoading(false)
-        console.log(res.status_verbose)
-        let product = null
 
         if (res.status_verbose !== "product found") {
-          product = {code:data}
+            Alert.alert("You do not have this item in your home inventory")
         }
 
         else {
-          product = res.product
+            firebase.firestore().collection('users').doc(user).collection('products').where("code", "==", res.product.code).get()
+            .then((snapshot)=> {
+                setIsLoading(false)
+                let sameProducts = []
+                snapshot.forEach((doc) => {
+                    sameProducts.push(doc.data());
+                })
+                if (sameProducts.length === 0) {
+                    Alert.alert("You do not have this item in your home inventory")
+                }
+            
+                else {
+                    Alert.alert("You have " + sameProducts[0].amount + " " + sameProducts[0].name + " left at home" )
+                }
+            })
+            .catch((e) => {
+                console.log(e)
+            })
         }
-
-        navigation.navigate("ProductResult", {product})
-        setProduct(product)
-        //setModalVisible(!modalVisible)
     })
-    .catch(error => {
-        setIsLoading(false)
-        console.log(error)
+    .catch((e) => {
+      console.log(e)
     })
-    //navigation.navigate("ProductResult", {product: {name:"Eshaan"}})
-  }
 
-  const checkItem = (data) => {
-    let url = "https://world.openfoodfacts.org/api/v0/product/"+data+".json"
-    setIsLoading(true)
-    
-    fetch(url)
-    .then(res => res.json())
-    .then(res => {
-        setIsLoading(false)
-        console.log(res.status_verbose)
-        let product = null
+    /*
+    if (sameProducts.length === 0) {
+        Alert.alert("You do not have this item in your home inventory")
+    }
 
-        if (res.status_verbose !== "product found") {
-          product = {code:data}
-        }
-
-        else {
-          product = res.product
-        }
-
-        setProduct(product)
-    })
-    .catch(error => {
-        setIsLoading(false)
-        console.log(error)
-    })
-}
+    else {
+        Alert.alert("You have " + sameProducts[0].amount + " " + sameProducts[0].name + " left at home" )
+    }*/
   
 
   if (hasPermission === null) {
@@ -88,6 +86,7 @@ export default ({navigation}) => {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
+}
 
   return (
     <View style={styles.container}>

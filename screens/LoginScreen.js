@@ -31,12 +31,13 @@ export default function LoginScreen({navigation}) {
   
 
   const doSignIn = () => {
+    console.log("start")
     setIsLoading(true)
     firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
     .then((response) => {
-
+      console.log("Logged in!")
       //firebase.firestore().settings({ experimentalForceLongPolling: true });
 
         const uid = response.user.uid

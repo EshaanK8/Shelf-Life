@@ -4,6 +4,9 @@ import React, {useState, useEffect} from 'react'
 import {StyleSheet, View} from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import Constants from 'expo-constants';
+
+import { LogBox } from 'react-native';
 
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
@@ -13,20 +16,19 @@ import { default as mapping } from './mapping.json'; // <-- Import app mapping
 import { CommonActions } from '@react-navigation/native';
 import { firebase } from './src/firebase/config'
 
-
-
 import LoginScreen from './screens/LoginScreen'
 import ProductDetailsScreen from './screens/ProductDetailsScreen'
 import ConfirmationPageScreen from './screens/ConfirmationPageScreen'
 import InventoryScreen from './screens/InventoryScreen'
-import ReceiptScannerScreen from './screens/ReceiptScannerScreen'
 import BarcodeScannerScreen from './screens/BarcodeScannerScreen'
+import CheckScannerScreen from './screens/CheckScannerScreen'
 import ItemsLeftPageScreen from './screens/ItemsLeftPageScreen'
 import CreateAccountScreen from './screens/CreateAccountScreen'
 import PrevBoughtScreen from './screens/PrevBoughtScreen'
 import LoadingScreen from './screens/LoadingScreen'
 import SettingsScreen from './screens/SettingsScreen'
 import ProfileScreen from './screens/ProfileScreen'
+import ProductResult from './screens/ProductResult'
 
 
 import {NavigationContainer} from '@react-navigation/native'
@@ -37,8 +39,20 @@ import {CardContext} from './components/cardContext.js';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import {
+  useFonts,
+  PTSans_400Regular,
+  PTSans_400Regular_Italic,
+  PTSans_700Bold,
+  PTSans_700Bold_Italic,
+} from '@expo-google-fonts/pt-sans';
+
+
 
 //-------------------------------------------------------------------------------------------------------------//
+
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
 
 //Navigators
 const AuthStack = createStackNavigator();
@@ -46,6 +60,19 @@ const Tabs = createBottomTabNavigator();
 
 const InventoryStack = createStackNavigator();
 const PrevBoughtStack = createStackNavigator();
+
+const BarcodeStack = createStackNavigator();
+
+const BarcodeStackScreen = (navigation) => (
+  <BarcodeStack.Navigator initialRouteName = "BarcodeScannerScreen">
+    <BarcodeStack.Screen
+      name="BarcodeScannerScreen"
+      component={BarcodeScannerScreen}
+      options={{title:"Scan Your Barcode"}}
+    />
+    <BarcodeStack.Screen name="ProductResult" component={ProductResult} options={{title:"Add Product"}}/>
+  </BarcodeStack.Navigator>
+)
 
 //Inventory Stack
 const InventoryStackScreen = (navigation) => (
@@ -55,30 +82,34 @@ const InventoryStackScreen = (navigation) => (
       component={InventoryScreen}
       options={{headerShown: false, title:""}}
     />
-    <InventoryStack.Screen name="ReceiptScannerScreen" component={ReceiptScannerScreen} options={{title: "Scan Your Receipt"}}/>
-    <InventoryStack.Screen name="BarcodeScannerScreen" component={BarcodeScannerScreen} options={{title: "Scan Your Barcode"}}/>
+    <InventoryStack.Screen name="BarcodeScannerScreen" component={BarcodeStackScreen} options={{headerShown: false, title:""}}/>
+    <InventoryStack.Screen name="CheckScannerScreen" component={CheckScannerScreen} options={{title: "Scan your item"}}/>
     <InventoryStack.Screen name="ProductDetailsScreen" component={ProductDetailsScreen} options={{title: ""}}/>
     <InventoryStack.Screen name= "SettingsScreen" component={SettingsScreen} options={{title: "Settings"}}/>
   </InventoryStack.Navigator>
 )
 
 //PrevBought Stack
-const PrevBoughtStackScreen = () => (
+const PrevBoughtStackScreen = (navigation) => (
   <PrevBoughtStack.Navigator>
     <PrevBoughtStack.Screen 
       name="PrevBoughtScreen" 
       component={PrevBoughtScreen}
       options={{headerShown: false, title:""}}
     />
-    <InventoryStack.Screen name="ProductDetailsScreen" component={ProductDetailsScreen} options={{title: ""}}/>
   </PrevBoughtStack.Navigator>
 )
 
 export default () => {
 
-  //State
   const [isLoading, setIsLoading] = React.useState(true)
-  //const [userId, setUserId] = useState('');
+  
+  let [fontsLoaded] = useFonts({
+    PTSans_400Regular,
+    PTSans_400Regular_Italic,
+    PTSans_700Bold,
+    PTSans_700Bold_Italic,
+  });
 
   const initialLoginState = {
     isLoading: true,
@@ -181,7 +212,7 @@ export default () => {
   }}, [])
 
   //Render Loading Screen
-  if (loginState.isLoading) {
+  if (loginState.isLoading || (!fontsLoaded)) {
     return <LoadingScreen/>
   }
 
@@ -189,27 +220,38 @@ export default () => {
   //Render navigation stack depending on if the user is signed in or not
   //The entire tree is wrapped in AuthContext.Provider so that ALL COMPONENTS have access to authContext functions
   return (
-    <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
-      <AuthContext.Provider value= {authContext}>
-      <userContext.Provider value={loginState.userId}>
-            <NavigationContainer>
-              {((loginState.signedIn == 'true')&&(loginState.userId !==null))  ? (
-                <Tabs.Navigator>
-                  <Tabs.Screen name= "InventoryScreen" component={InventoryStackScreen} options={{title: "Inventory", headerShown: false}}/>
-                  <Tabs.Screen name= "PrevBoughtScreen" component={PrevBoughtStackScreen} options={{title: "Previously Bought", headerShown: false}}/>
-                </Tabs.Navigator>
-              ) 
-              :(
-                <AuthStack.Navigator initalRouteName = "LoginScreen" screenOptions={{ headerStyle: { backgroundColor: '#fff',elevation:0, borderBottomWidth: 0} }}>
-                    <AuthStack.Screen name= "LoginScreen" component ={LoginScreen} options={{title: "Sign In", headerShown: false}}/>
-                    <AuthStack.Screen name= "CreateAccountScreen"  component ={CreateAccountScreen} options={{title: ""}} />
-                  </AuthStack.Navigator>
-              )}
-            </NavigationContainer>
-        </userContext.Provider>
-      </AuthContext.Provider>
-    </ApplicationProvider>
-
+      <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
+        <AuthContext.Provider value= {authContext}>
+        <userContext.Provider value={loginState.userId}>
+              <NavigationContainer style={{marginTop: Constants.statusBarHeight}}>
+                {((loginState.signedIn == 'true')&&(loginState.userId !==null))  ? (
+                  <View style={{flex:1}}>
+                    <StatusBar
+                      backgroundColor="#4c29e6"
+                      barStyle="light-content"
+                    />
+                    <Tabs.Navigator>
+                      <Tabs.Screen name= "InventoryScreen" component={InventoryStackScreen} options={{title: "Inventory", headerShown: false}}/>
+                      <Tabs.Screen name= "PrevBoughtScreen" component={PrevBoughtStackScreen} options={{title: "Previously Bought", headerShown: false}}/>
+                    </Tabs.Navigator>
+                  </View>
+                ) 
+                :(
+                  <View style={{flex:1}}>
+                    <StatusBar
+                        backgroundColor="#4c29e6"
+                        barStyle="light-content"
+                      />
+                    <AuthStack.Navigator initalRouteName = "LoginScreen" screenOptions={{ headerStyle: { backgroundColor: '#fff',elevation:0, borderBottomWidth: 0} }}>
+                        <AuthStack.Screen name= "LoginScreen" component ={LoginScreen} options={{title: "Sign In", headerShown: false}}/>
+                        <AuthStack.Screen name= "CreateAccountScreen"  component ={CreateAccountScreen} options={{title: ""}} />
+                    </AuthStack.Navigator>
+                  </View>
+                )}
+              </NavigationContainer>
+          </userContext.Provider>
+        </AuthContext.Provider>
+      </ApplicationProvider>
   )
 }
   

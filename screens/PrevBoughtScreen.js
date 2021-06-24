@@ -1,39 +1,111 @@
 import React, {Component, useState, useEffect} from 'react';
-import {StyleSheet,Text,View,Button, TouchableOpacity, TextInput, FlatList, ScrollView, Dimensions, ActivityIndicator} from 'react-native';
+import {StyleSheet,Text,View,Button, TouchableOpacity, Modal, TextInput, FlatList, ScrollView, Dimensions, ActivityIndicator} from 'react-native';
+import {SearchBar} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Constants from 'expo-constants';
-import ProductCard from '../components/ProductCard';
+import PrevProductCard from '../components/PrevProductCard';
 import ScanContainer from '../components/ScanContainer';
 import {userContext} from '../components/userContext.js';
 import { firebase } from '../src/firebase/config'
+import { useIsFocused } from "@react-navigation/native";
+import PrevProductDetailsScreen from './PrevProductDetailsScreen';
+
+import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
 
 export default ({navigation}) => {
   const user = React.useContext(userContext)
   const [userFullData, setUserFullData] = useState([])
-  const [productList, setProductList] = useState([
-  ]);
+  const [productList, setProductList] = useState([]);
   const [refreshing, setRefreshing] = useState(false)
+  const isFocused = useIsFocused();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentItem, setCurrentItem] = useState(null);
 
   //Product Storage
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const [currentProductItem, setCurrentProductItem] = useState(null)
+
+  //Search Bar
+  const [error, setError] = useState(null)
+  const [data, setData] = useState([])
+  const [searchText, setSearchText] = useState("")
+  const [searchBarToggle, setSearchBarToggle] = useState(false)
+
+
+  //Search Bar function
+  const searchFilterFunction = (text) => {
+    // Check if searched text is not blank
+    if (text) {
+      // Inserted text is not blank
+      // Filter the masterDataSource
+      // Update FilteredDataSource
+      const newData = productList.filter(function (item) {
+        const itemData = item.name
+          ? item.name.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setData(newData);
+      setSearchText(text);
+    } else {
+      // Inserted text is blank
+      // Update FilteredDataSource with masterDataSource
+      setData(productList);
+      setSearchText(text);
+    }
+  };
+
 
   //--------------------------------Storage API functions-------------------------------//
   function createDocument() {
-    return firebase.firestore().collection('users').doc(user).collection('prevProducts').doc()
+    console.log("Hello" + firebase.firestore().collection('users').doc(user).collection('products').doc("x0ShX57DOKR503mqIqlI").name)
+    return firebase.firestore().collection('users').doc(user).collection('products').doc()
   }
+
   const addPrevProduct = (product, docRef) => {
     docRef.set({
       name: product.name,
       id: product.id,
-      key: product.key,
       dateAdded:  firebase.firestore.FieldValue.serverTimestamp(),
       image: product.image,
-      amount: product.amount
+      amount: product.amount,
+      ingredients: product.ingredients,
+      allergens: product.allergens
     })
-    console.log(product)
-    setProductList([...productList, product])
+    const newProductList = [...productList, product]
+    setProductList(newProductList)
+    setData(newProductList)
+  }
+
+  const addProduct = (product, docRef) => {
+    if ((!product.ingredients)) {
+      product.ingredients = []
+    }
+
+    if ((!product.allergens)) {
+      product.allergens = []
+    }
+    
+    docRef.set({
+      name: product.name,
+      code: product.code,
+      id: product.id,
+      dateAdded:  firebase.firestore.FieldValue.serverTimestamp(),
+      image: product.image,
+      amount: product.amount,
+      ingredients: product.ingredients,
+      allergens: product.allergens
+    })
+    .then(() => {
+      console.log("Doc written")
+      //const newProductList = [...productList, product]
+      //setProductList(newProductList)
+      //setData(newProductList)
+    })
+    .catch(() => {
+      console.log("Couldn't write doc")
+    })
   }
 
   const getPrevProducts = async(productsRetreived) => {
@@ -49,6 +121,7 @@ export default ({navigation}) => {
 
       productsRetreived(productList)
   }
+  
 
   const getUserFullData = async (dataRetreived) => {
       var userFullData = null
@@ -73,51 +146,136 @@ export default ({navigation}) => {
 
   const onListChange = (newList) => {
     setProductList(newList)
+    setData(newList)
   }
   
   const onProductsRecieved = (productList) => {
     setProductList(productList)
+    setData(productList)
   }
 
   const onUserFullDataRecieved = (userFullData) => {
     setUserFullData(userFullData)
   }
 
+  const handleItemPressed = (item) => {
+    console.log(item.name)
+    setCurrentItem(item)
+    setModalVisible(!modalVisible)
+  }
+
+  const handleLongPressButton = (item) => {
+    console.log("Hello " + item.name)
+  }
+
+  const onModalChange = (newModal) => {
+    setModalVisible(newModal)
+  }
+
+  const onClose = (newModal) => {
+      setModalVisible(newModal)
+  }
+
+  const productExists = async(newItem, newItemRetreived) => {
+    let sameProducts = []
+    var snapshot = await firebase.firestore().collection('users').doc(user).collection('products').where("code", "==", newItem.code).get()
+    
+    snapshot.forEach((doc) => {
+        sameProducts.push(doc.data());
+    });
+
+    return newItemRetreived(sameProducts)
+  }
+
+  const onNewItemRecieved = (newItem) => {
+    return newItem
+  }
+
+
+
+  const onNewItem = async(newItem) => {
+    var sameProducts = await productExists(newItem, onNewItemRecieved)
+    if ((newItem.name) && (newItem.code) && (newItem.amount) && (newItem.image)) {
+      if (newItem.amount > 0) {
+        if (sameProducts.length !== 0) {
+          console.log("already exists")
+          let productID = sameProducts[0].id
+          firebase.firestore().collection('users').doc(user).collection('products').doc(productID).update({amount: firebase.firestore.FieldValue.increment(newItem.amount)})
+
+          const newProductList = [...productList]
+          for (i = 0; i < productList.length; i++){
+            if (productList[i].code === newItem.code) {
+              newProductList[i].amount += newItem.amount
+            }
+          }
+          setProductList(newProductList)
+          setData(newProductList)
+      }
+        else {
+          console.log("new")
+          var newDoc = createDocument()
+          addProduct({name: newItem.name, code: newItem.code, id: newDoc.id, amount: newItem.amount, dateAdded: '03/02/21', image: newItem.image, ingredients: newItem.ingredients, allergens: newItem.allergens}, newDoc)
+          console.log("product added")
+        }
+      }
+
+      else {
+        Alert.alert("Please enter more than one item")
+      }
+      
+    }
+
+    else {
+      Alert.alert("This item cannot be added due to missing information")
+    }
+
+    getProducts(onProductsRecieved)
+  }
+
+
   //Like componentDidMount
   useEffect(() => {
     getPrevProducts(onProductsRecieved)
     getUserFullData(onUserFullDataRecieved)
-  }, []);
+  }, [isFocused]);
   handleRefresh = () => {
     setRefreshing(true)
+    getPrevProducts(onProductsRecieved)
     setTimeout(function(){setRefreshing(false)}, 500);
   }
 
   return (
 
-    <View style = {{paddingTop: Constants.statusBarHeight, backgroundColor: "white", flex: 1}}>
-      <TextInput
-        placeholder = "Add Product"
-        value={currentProductItem}
-        onChangeText = {(text) => setCurrentProductItem(text)}
-      />
-      <Button 
-        style = {{width: 200, height: 100}}
-        title='Submit' 
-        onPress = {() => {
-          var newDoc = createDocument()
-          addPrevProduct({name: currentProductItem, key: 8, id: newDoc.id, amount: 1, dateAdded: '03/02/21', image: 'https://i5.walmartimages.ca/images/Large/514/354/6000202514354.jpg' }, newDoc) 
-        }}
-      />
-      <FlatList
-      data={productList} 
-      renderItem={({item}) => {
-          return <ProductCard item = {item} productList = {productList} onListChange={onListChange}/>
-      }}
-      refreshing = {refreshing}
-      onRefresh = {handleRefresh}
-    />
+    <View style = {{paddingTop: Constants.statusBarHeight, paddingLeft:"5%", paddingRight:"5%", backgroundColor: "white", flex: 1}}>
+      <View style={styles.bigTitleContainer}>
+        <Text style={styles.title}>Previously Bought Products 🧀</Text>
+      </View>
+      <View style={{flex:0.92}}>
+        <SearchBar 
+          placeholder="Gouda Cheese" 
+          lightTheme 
+          round 
+          value = {searchText} 
+          onChangeText={(text) => searchFilterFunction(text)} autoCorrect={false}
+          containerStyle = {styles.searchBar}
+        />
+        <FlatList
+          data={data} 
+          renderItem={({item}) => {
+              return (
+              <TouchableOpacity onPress = {()=>handleItemPressed(item)}>
+                <PrevProductCard item = {item} productList = {productList} onListChange={onListChange}/>
+              </TouchableOpacity>)
+          }}
+          refreshing = {refreshing}
+          onRefresh = {handleRefresh}
+        />
+        <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => {setModalVisible(!modalVisible);}}>
+            <PrevProductDetailsScreen productList = {productList} item={currentItem} onModalChange={onModalChange} onClose={onClose} onNewItem={onNewItem}/>
+        </Modal>
+      </View>
     </View>
+    
   )
 }
 
@@ -159,10 +317,6 @@ const styles = StyleSheet.create({
   barcodeButton: {
     marginLeft:"auto"
   },
-  scanText: {
-    fontSize: 15,
-    alignSelf: 'center'
-  },
   scanIcon: {
     width: "100%", 
     height: "65%", 
@@ -180,7 +334,32 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize:20,
     fontWeight:"700"
-  }
-
-
+  },
+  searchBar: {
+    backgroundColor: 'white',
+    borderWidth: 0, //no effect
+    shadowColor: 'white', //no effect
+    borderBottomColor: 'transparent',
+    borderTopColor: 'transparent'
+  },
+  bigTitleContainer: {
+    flexDirection: "row",
+    width:"100%",
+    flex:0.05,
+    paddingLeft: '5%',
+    paddingRight: '5%',
+    paddingTop: '5%',
+  },
+  title: {
+    fontSize: responsiveFontSize(3),
+    fontFamily: 'PTSans_700Bold'
+  },
+    searchBar: {
+    backgroundColor:'rgba(52, 52, 52, 0)',
+    borderWidth: 0, //no effect,
+    width: "100%",
+    shadowColor: 'white', //no effect
+    borderBottomColor: 'transparent',
+    borderTopColor: 'transparent'
+  },
 });
