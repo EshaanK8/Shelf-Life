@@ -47,7 +47,7 @@ import {
   PTSans_700Bold,
   PTSans_700Bold_Italic,
 } from '@expo-google-fonts/pt-sans';
-import { responsiveHeight, responsiveFontSize } from 'react-native-responsive-dimensions';
+import { responsiveHeight, responsiveFontSize, responsiveScreenHeight } from 'react-native-responsive-dimensions';
 
 
 
@@ -246,24 +246,23 @@ export default () => {
                       barStyle="light-content"
                     />
                     <Tabs.Navigator tabBarOptions=
-                      {{showLabel: true, 
+                      {{showLabel: false,
                         style: {
                           position: 'absolute',
-                          bottom:25,
-                          left:20,
-                          right:20,
-                          elevation:0,
                           backgroundColor:"#4c29e6",
-                          borderRadius:15,
-                          height:responsiveHeight(10),
-                          ...styles.shadow
+                          borderTopLeftRadius:40,
+                          borderTopRightRadius:40,
+                          height:responsiveScreenHeight(8),
+                          ...styles.shadow,
+                          justifyContent: "center",
+                          alignItems: "center",
                         }
                       }}>
                       <Tabs.Screen name= "InventoryScreen" component={InventoryStackScreen} options={({route}) => ({
-                        title: "",
+                        tabBarLabel:() => {return null},
                         tabBarIcon: ({focused}) => (
-                          <View style={{alignItems:"center", backgroundColor: focused? "#fc88a8": "#4c29e6", borderRadius: 20, width:"80%", height:"130%", justifyContent:"center", top:"50%"}}>
-                            <Ionicons size={responsiveHeight(3)} style = {{marginRight:"2%"}} color={focused? "#4c29e6": "white"}name= {focused? "home" : "home-outline"}/>
+                          <View style={{alignItems:"center", backgroundColor: focused? "#fc88a8": "#4c29e6", borderRadius: 20, width:"80%", height:"80%", justifyContent:"center"}}>
+                            <Ionicons size={responsiveHeight(3.2)} style = {{marginRight:"2%"}} color={focused? "#4c29e6": "white"}name= {focused? "home" : "home-outline"}/>
                             <Text style={{color: '#4c29e6', fontSize: responsiveFontSize(1.5),fontFamily: 'PTSans_400Regular'}}>Home</Text>
                           </View>
                         ), 
@@ -271,10 +270,10 @@ export default () => {
                         tabBarVisible: getTabBarVisibility(route)
                       })}/>
                       <Tabs.Screen name= "PrevBoughtScreen" component={PrevBoughtStackScreen} options={({route}) => ({
-                        title: "",
+                        tabBarLabel:() => {return null},
                         tabBarIcon: ({focused}) => (
-                          <View style={{alignItems:"center", backgroundColor: focused? "#fc88a8": "#4c29e6", borderRadius: 20, width:"80%", height:"130%", justifyContent:"center", top:"50%"}}>
-                            <Ionicons size={responsiveHeight(3.3)} style = {{marginRight:"2%"}} color={focused? "#4c29e6": "white"} name= {focused? "cart" : "cart-outline"}/>
+                          <View style={{alignItems:"center", backgroundColor: focused? "#fc88a8": "#4c29e6", borderRadius: 20, width:"80%", height:"80%", justifyContent:"center"}}>
+                            <Ionicons size={responsiveHeight(3.5)} style = {{marginRight:"2%"}} color={focused? "#4c29e6": "white"} name= {focused? "cart" : "cart-outline"}/>
                             <Text style={{color: '#4c29e6', fontSize: responsiveFontSize(1.5),fontFamily: 'PTSans_400Regular'}}>Previously Bought</Text>
                           </View>
                         ), 
