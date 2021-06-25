@@ -3598,10 +3598,20 @@ expo-font@~9.1.0:
   dependencies:
     fontfaceobserver "^2.1.0"
 
+expo-haptics@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/expo-haptics/-/expo-haptics-9.0.0.tgz#a01605634ff9b8a4dc8023f5430278be874f525b"
+  integrity sha512-jBYgclyBVuGiqFPxdYSpIE5OEpWodu1B8fsqDLVIOWjdACnKVGsaBpSF6W4Xq0wVRvoak7C4Oz7ISV08rtPMOw==
+
 expo-keep-awake@~9.1.2:
   version "9.1.2"
   resolved "https://registry.npmjs.org/expo-keep-awake/-/expo-keep-awake-9.1.2.tgz"
   integrity sha512-CCuEOQUNLYtMA0rt0sQ9u5LlIMH7lDJG7dImoorfKMsP95yHXy8dl3oCdtaz2zbsPgggVYeom9gE+gQu+Ki4rQ==
+
+expo-linear-gradient@^9.0.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/expo-linear-gradient/-/expo-linear-gradient-9.1.0.tgz#7adfe8284268874134954b8249207938c455a5b3"
+  integrity sha512-9W4TxaDrZUzmLzd18+Eo2Ef7ONnuLrHKX0PRyHEGY2/rJCtGiPJtJuR6AS5dkX7WB/Pxlx0zK/p/qDHHw09Uxg==
 
 expo-status-bar@~1.0.4:
   version "1.0.4"
@@ -5833,6 +5843,14 @@ react-native-gesture-handler@^1.10.3:
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+react-native-gradient-buttons@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-gradient-buttons/-/react-native-gradient-buttons-2.0.2.tgz#cbf944aaddcf0cac94aa521d3d0e67b4b688847f"
+  integrity sha512-XAuyLXSZGZSmFD7stLkoaKVUH6EY6QLU2pSp60vDXafu0VKkVUXH4tdooaYis8o2Zx7KyM22u1w3C3iC5oTduw==
+  dependencies:
+    expo-haptics "^9.0.0"
+    expo-linear-gradient "^9.0.0"
 
 react-native-image-picker@^4.0.3:
   version "4.0.3"

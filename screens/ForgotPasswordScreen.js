@@ -4,7 +4,6 @@ import{AuthContext} from '../components/context'
 import { firebase } from '../src/firebase/config'
 import LoadingScreen from './LoadingScreen'
 import { useFonts } from 'expo-font';
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
 
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
@@ -12,6 +11,8 @@ import { default as theme } from '../custom-theme.json'; // <-- Import app theme
 import { default as mapping } from '../mapping.json'; // <-- Import app mapping
 
 import GradientButton from 'react-native-gradient-buttons';
+import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+
 
 
 
@@ -24,6 +25,8 @@ export default function LoginScreen({navigation}) {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = React.useState(false)
   const {signIn} = React.useContext(AuthContext) //Get the signIn function from the AuthContext
+  const [showDone, setShowDone] = useState(false);
+
 
   
 
@@ -65,8 +68,15 @@ export default function LoginScreen({navigation}) {
         alert(error)
     })
   }
-    
-  
+
+  forgotPassword = (Email) => {
+    firebase.auth().sendPasswordResetEmail(Email)
+      .then(function (user) {
+        setShowDone(true)
+      }).catch(function (e) {
+        console.log(e)
+      })
+  }
 
   //Render Loading Screen
   if (isLoading) {
@@ -79,10 +89,10 @@ export default function LoginScreen({navigation}) {
           <Layout style={styles.mainLayout} keyboardShouldPersistTaps="always">
 
               <View style={styles.welcomeView}>
-                <Text style ={styles.welcomeText}>Welcome to InventoryApp,</Text>
-                <Text style ={styles.signInText}>Sign in to continue</Text>
+                <Text style ={styles.welcomeText}>Reset Your Password</Text>
+                <Text style ={styles.signInText}>Please enter your email</Text>
               </View>
-              
+
                 <TextInput
                     style={styles.emailInput}
                     placeholder='E-mail'
@@ -92,33 +102,13 @@ export default function LoginScreen({navigation}) {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                <TextInput
-                    style={styles.passwordInput}
-                    placeholderTextColor="#aaaaaa"
-                    secureTextEntry
-                    placeholder='Password'
-                    onChangeText={(text) => setPassword(text)}
-                    value={password}
-                    underlineColorAndroid="transparent"
-                    autoCapitalize="none"
-                />
-                <View style={styles.forgotText}>
-                  <TouchableOpacity onPress = {() => navigation.push('ForgotPasswordScreen')}>
-                    <Text style={{color: '#b522f2', fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Forgot Password?</Text>
-                  </TouchableOpacity>
-                </View>
 
-                <GradientButton text="Log in" width='90%' violetPink  textStyle={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }} impact radius={10} height={responsiveHeight(5)} style={{marginTop:'15%', marginBottom:'2%',}} onPressAction={() => doSignIn()}/>
-
-                <View style={styles.createText}>
-                  <Text style={{fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Don't have an account? </Text>
-                  <TouchableOpacity onPress = {onFooterLinkPress}>
-                    <Text style={{color: '#b522f2', fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Sign up</Text>
-                  </TouchableOpacity>
+                <View>
+                    {showDone && <Text style={{color: '#b522f2', fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Email sent. Please check your email.</Text>}
                 </View>
+            
+                <GradientButton text="Send Email" width='90%' violetPink textStyle={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }} impact radius={10} height={responsiveHeight(5)} style={{marginTop:'15%', marginBottom:'2%',}} onPressAction={forgotPassword(email)}/>
           </Layout>
-              
-          
       </Layout>
     </ApplicationProvider>
   )
@@ -159,8 +149,7 @@ const styles = StyleSheet.create({
     marginTop:'15%',
     marginBottom:'2%',
     width: "90%",
-    borderRadius: 10,
-    //backgroundColor: "linear-gradient(90deg, rgba(254,87,89,1) 0%, rgba(217,72,122,1) 35%, rgba(116,32,214,1) 100%);"
+    borderRadius: 10
  },
   signUpButton: {
     marginTop:'2%',
@@ -174,13 +163,7 @@ const styles = StyleSheet.create({
   justifyContent: 'center', 
   alignItems: 'center' 
 },
-forgotText: {
-  width:"100%",
-  paddingRight: "5%",
-  flexDirection: 'column', 
-  justifyContent: 'center',
-  alignItems: "flex-end",
-},
+
 welcomeView: {
   marginTop:"30%",
   width: "90%",
@@ -189,12 +172,16 @@ welcomeView: {
 },
 
 welcomeText: {
+  fontWeight: "bold",
   color: "black",
+  fontSize: 25,
   fontSize: responsiveFontSize(3),
   fontFamily: 'PTSans_700Bold',
 },
 signInText: {
+  fontWeight: "bold",
   color: "lightgrey",
+  fontSize: 20,
   marginTop: "1%",
   fontSize: responsiveFontSize(2.9),
   fontFamily: 'PTSans_700Bold',

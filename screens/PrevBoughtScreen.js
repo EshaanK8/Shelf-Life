@@ -270,7 +270,7 @@ export default ({navigation}) => {
           refreshing = {refreshing}
           onRefresh = {handleRefresh}
         />
-        <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => {setModalVisible(!modalVisible);}}>
+        <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => {setModalVisible(!modalVisible);}}>
             <PrevProductDetailsScreen productList = {productList} item={currentItem} onModalChange={onModalChange} onClose={onClose} onNewItem={onNewItem}/>
         </Modal>
       </View>

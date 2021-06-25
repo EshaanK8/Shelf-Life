@@ -10,6 +10,9 @@ import * as eva from '@eva-design/eva';
 import { default as theme } from '../custom-theme.json'; // <-- Import app theme
 import { default as mapping } from '../mapping.json'; // <-- Import app mapping
 
+import GradientButton from 'react-native-gradient-buttons';
+import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+
 
 
 
@@ -114,11 +117,12 @@ export default function RegistrationScreen({navigation}) {
                     autoCapitalize="none"
                 />
             
-                <Button style={styles.createButton} onPress={() => onRegisterPress()}>Create account</Button>
+                
+                <GradientButton text="Create Account" width='90%' violetPink textStyle={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }} impact radius={10} height={responsiveHeight(5)} style={{marginTop:'15%', marginBottom:'2%',}} onPressAction={() => onRegisterPress()}/>
                 <View style={styles.createText}>
-                  <Text>Already have an account? </Text>
+                  <Text style={{fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Already have an account? </Text>
                   <TouchableOpacity onPress = {onFooterLinkPress}>
-                    <Text style={{color: 'blue'}}>Sign in</Text>
+                    <Text style={{color: '#b522f2'}}>Sign in</Text>
                   </TouchableOpacity>
                 </View>
           </Layout>
@@ -205,7 +209,9 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontWeight: "bold",
     color: "black",
-    fontSize: 25
+    fontSize: 25,
+    fontSize: responsiveFontSize(3),
+  fontFamily: 'PTSans_700Bold',
   },
   signInText: {
     fontWeight: "bold",

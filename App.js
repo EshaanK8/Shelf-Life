@@ -24,6 +24,7 @@ import BarcodeScannerScreen from './screens/BarcodeScannerScreen'
 import CheckScannerScreen from './screens/CheckScannerScreen'
 import ItemsLeftPageScreen from './screens/ItemsLeftPageScreen'
 import CreateAccountScreen from './screens/CreateAccountScreen'
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen'
 import PrevBoughtScreen from './screens/PrevBoughtScreen'
 import LoadingScreen from './screens/LoadingScreen'
 import SettingsScreen from './screens/SettingsScreen'
@@ -46,6 +47,7 @@ import {
   PTSans_700Bold,
   PTSans_700Bold_Italic,
 } from '@expo-google-fonts/pt-sans';
+import { responsiveHeight, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 
 
@@ -184,6 +186,19 @@ export default () => {
     },
   }), [])
 
+  const getTabBarVisibility = (route) => {
+    console.log(route)
+    const routeName = route.state
+      ? route.state.routes[route.state.index].name
+      : 'InventoryScreen';
+  
+    if (routeName !== 'InventoryScreen' && routeName !== 'PrevBoughtScreen') {
+      return false;
+    }
+  
+    return true;
+  }
+
   /*
    // This code is for it to run whenever your variable, timerOn, changes
    useEffect(() => {
@@ -230,9 +245,42 @@ export default () => {
                       backgroundColor="#4c29e6"
                       barStyle="light-content"
                     />
-                    <Tabs.Navigator>
-                      <Tabs.Screen name= "InventoryScreen" component={InventoryStackScreen} options={{title: "Inventory", headerShown: false}}/>
-                      <Tabs.Screen name= "PrevBoughtScreen" component={PrevBoughtStackScreen} options={{title: "Previously Bought", headerShown: false}}/>
+                    <Tabs.Navigator tabBarOptions=
+                      {{showLabel: true, 
+                        style: {
+                          position: 'absolute',
+                          bottom:25,
+                          left:20,
+                          right:20,
+                          elevation:0,
+                          backgroundColor:"#4c29e6",
+                          borderRadius:15,
+                          height:responsiveHeight(10),
+                          ...styles.shadow
+                        }
+                      }}>
+                      <Tabs.Screen name= "InventoryScreen" component={InventoryStackScreen} options={({route}) => ({
+                        title: "",
+                        tabBarIcon: ({focused}) => (
+                          <View style={{alignItems:"center", backgroundColor: focused? "#fc88a8": "#4c29e6", borderRadius: 20, width:"80%", height:"130%", justifyContent:"center", top:"50%"}}>
+                            <Ionicons size={responsiveHeight(3)} style = {{marginRight:"2%"}} color={focused? "#4c29e6": "white"}name= {focused? "home" : "home-outline"}/>
+                            <Text style={{color: '#4c29e6', fontSize: responsiveFontSize(1.5),fontFamily: 'PTSans_400Regular'}}>Home</Text>
+                          </View>
+                        ), 
+                        headerShown: false,
+                        tabBarVisible: getTabBarVisibility(route)
+                      })}/>
+                      <Tabs.Screen name= "PrevBoughtScreen" component={PrevBoughtStackScreen} options={({route}) => ({
+                        title: "",
+                        tabBarIcon: ({focused}) => (
+                          <View style={{alignItems:"center", backgroundColor: focused? "#fc88a8": "#4c29e6", borderRadius: 20, width:"80%", height:"130%", justifyContent:"center", top:"50%"}}>
+                            <Ionicons size={responsiveHeight(3.3)} style = {{marginRight:"2%"}} color={focused? "#4c29e6": "white"} name= {focused? "cart" : "cart-outline"}/>
+                            <Text style={{color: '#4c29e6', fontSize: responsiveFontSize(1.5),fontFamily: 'PTSans_400Regular'}}>Previously Bought</Text>
+                          </View>
+                        ), 
+                        headerShown: false,
+                        tabBarVisible: getTabBarVisibility(route)
+                      })}/>
                     </Tabs.Navigator>
                   </View>
                 ) 
@@ -245,6 +293,7 @@ export default () => {
                     <AuthStack.Navigator initalRouteName = "LoginScreen" screenOptions={{ headerStyle: { backgroundColor: '#fff',elevation:0, borderBottomWidth: 0} }}>
                         <AuthStack.Screen name= "LoginScreen" component ={LoginScreen} options={{title: "Sign In", headerShown: false}}/>
                         <AuthStack.Screen name= "CreateAccountScreen"  component ={CreateAccountScreen} options={{title: ""}} />
+                        <AuthStack.Screen name= "ForgotPasswordScreen"  component ={ForgotPasswordScreen} options={{title: ""}} />
                     </AuthStack.Navigator>
                   </View>
                 )}
@@ -263,6 +312,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF'
+  },
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width:0,
+      height:10
+    },
+    shadowOpacity:0.25,
+    shadowRadius:3.5,
+    elevation:5
   }
 });
 
