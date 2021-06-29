@@ -1,5 +1,5 @@
-import React, { Component, useState } from 'react';
-import {StyleSheet,View, TouchableOpacity, Alert, Dimensions, Animated, Image, ImageBackground, ActivityIndicator} from 'react-native';
+import React, { Component, useState} from 'react';
+import {StyleSheet,View, TouchableOpacity, Alert, TextInput, Dimensions, Animated, Image, ImageBackground} from 'react-native';
 import {responsiveHeight,responsiveWidth,responsiveFontSize, responsiveScreenHeight} from "react-native-responsive-dimensions";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Constants from 'expo-constants';
@@ -8,9 +8,11 @@ import { useNavigation } from '@react-navigation/native';
 import { Button, Text } from '@ui-kitten/components';
 import diet from '../assets/diet.png'
 import background from '../assets/background.png'
+import AnimatedLoader from 'react-native-animated-loader';
 
 export default ({ route, navigation }) => {
     const { product } = route.params;
+
     var isHidden = true;
     const [amount, setAmount] = useState(0)
 
@@ -22,6 +24,14 @@ export default ({ route, navigation }) => {
         };
         return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
     }
+
+    const [isLoading, setIsLoading] = useState("");
+    const [barcode, setBarcode] = useState(product.code)
+    const [prodName, setProdName] = useState("")
+    const [image, setImage] = useState("")
+    const [ingredients, setIngredients] = useState("")
+    const [allergens, setAllergens] = useState("")
+    
 
     const createProduct = () => {
         let newItem = {
@@ -70,6 +80,42 @@ export default ({ route, navigation }) => {
         }
     }
 
+    const uploadProduct = () => {
+        setIsLoading(true)
+        fetch('https://us.openfoodfacts.org/cgi/product_jqm2.pl?code='+barcode+'&imgupload_front=../assets/diet.png&product_name='+prodName+'&ingredients_hierarchy='+ingredients+'&allergens_hierarchy='+allergens)
+        .then(res => res.json())
+        .then(res => {
+            setIsLoading(false)
+            const status = res.status
+            if (status === 1) {
+                handleSearch(barcode)
+            }
+        })
+        .catch(error => {
+            setIsLoading(false)
+            console.log(error)
+        });  
+    }
+
+    handleSearch = (data) => {
+        let url = "https://world.openfoodfacts.org/api/v0/product/"+data+".json"
+        setIsLoading(true)
+
+        fetch(url)
+        .then(res => res.json())
+        .then(res => {
+            setIsLoading(false)
+            console.log(res.status_verbose)
+            let product = null
+
+            product = res.product
+
+            navigation.push("ProductResult", {product})
+            setProduct(product)
+            //setModalVisible(!modalVisible)
+        })
+    }
+
     
   return (
     <View style={styles.container}>
@@ -77,11 +123,31 @@ export default ({ route, navigation }) => {
                 <View style={styles.container}>
                     <ImageBackground source={background} style={{flex:1, resizeMode: "cover", alignItems: "center",  width: "100%"}}>
                     <View style={{flex:0.1}}>
-
+                        
                     </View>
-                    <Text>Add a product</Text>
+                    {isLoading ? <View style={{position:"absolute",top:0,bottom:0,left:0,right:0, alignItems: "center", justifyContent: "center"}}>
+                        <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" source={require("../assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
+                    </View> : null}
+                    
+                    <TextInput
+                        style={styles.emailInput}
+                        placeholder='Kodiak Cakes'
+                        placeholderTextColor="#aaaaaa"
+                        onChangeText={(text) => setProdName(text)}
+                        value={prodName}
+                        underlineColorAndroid="transparent"
+                        autoCapitalize="none"
+                    />
+                    <Text>Barcode</Text>
+                    <TextInput
+                        style={styles.passwordInput}
+                        onChangeText={(text) => setBarcode(text)}
+                        value={barcode}
+                        underlineColorAndroid="transparent"
+                        autoCapitalize="none"
+                    />
                     <View style = {styles.submitContainer}>
-                        <Button onPress={newProductSubmit} size='medium' status='danger' style={{width: "80%"}}><Text style ={{fontSize: responsiveFontSize(2), fontFamily: 'PTSans_700Bold', color: "white"}}>Submit</Text></Button>
+                        <Button onPress={uploadProduct} size='medium' status='danger' style={{width: "80%"}}><Text style ={{fontSize: responsiveFontSize(2), fontFamily: 'PTSans_700Bold', color: "white"}}>Submit</Text></Button>
                     </View>
                     </ImageBackground>
                 </View>
@@ -229,5 +295,24 @@ const styles = StyleSheet.create({
     textAndButtons: {
         flex: 1,
         flexDirection: "column",
+    },
+    emailInput: {
+        marginTop: '20%',
+        height: 50,
+        margin: 12,
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingLeft: 15,
+        width: "90%",
+        borderColor: "lightgrey"
+    },
+    passwordInput: {
+        height: 50,
+        margin: 12,
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingLeft: 15,
+        width: "90%",
+        borderColor: "lightgrey"
     },
 });

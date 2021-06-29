@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         height: responsiveHeight(10),
         marginLeft: "5%",
         marginRight: "5%",
-        backgroundColor: "rgba(248,248,248,255)"
+        backgroundColor: "rgba(255,255,255,0.75)"
     },
     imageContainer: {
         flex:1,

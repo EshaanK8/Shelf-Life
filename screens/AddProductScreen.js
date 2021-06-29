@@ -128,7 +128,8 @@ const styles = StyleSheet.create({
         width:"100%",
         flex:0.25,
         justifyContent: "center",
-        marginLeft: responsiveWidth(5)
+        marginLeft: responsiveWidth(5),
+        marginTop:"5%"
       },
       nameContainer: {
         flex:3,

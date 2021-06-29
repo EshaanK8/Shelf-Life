@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Constants from 'expo-constants'
 import ProductResult from './ProductResult'
@@ -7,7 +7,9 @@ import { Alert } from 'react-native';
 import { Button, Text } from '@ui-kitten/components';
 import {userContext} from '../components/userContext.js';
 import { firebase } from '../src/firebase/config'
-
+import GradientButton from 'react-native-gradient-buttons';
+import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import AnimatedLoader from 'react-native-animated-loader';
 
 export default ({navigation}) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -95,8 +97,11 @@ export default ({navigation}) => {
             onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
             style={StyleSheet.absoluteFillObject}
           />
-          {isLoading ? <View style={{position:"absolute",top:0,bottom:0,left:0,right:0, alignItems: "center", justifyContent: "center"}}><ActivityIndicator alignSelf="center" size="large" color="rgb(142, 228, 175)"/></View> : null}
-          {scanned && <Button onPress={() => setScanned(false)} size='medium' status='success' style={styles.lookButton}>Look for a Barcode</Button>}
+          {isLoading ? 
+            <View style={{position:"absolute",top:0,bottom:0,left:0,right:0, alignItems: "center", justifyContent: "center"}}>
+              <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" source={require("../assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
+            </View> : null}
+          {scanned && <GradientButton text="Look for a Barcode" width='90%' violetPink  textStyle={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }} impact radius={10} height={responsiveHeight(7)} style={styles.lookButton} onPressAction={() => setScanned(false)}/>}
         </View>
     </View>
   )

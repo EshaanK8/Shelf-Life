@@ -1,10 +1,12 @@
 import Expo from 'expo';
 import { StatusBar } from 'expo-status-bar'
 import React, {useState, useEffect} from 'react'
-import {StyleSheet, View} from 'react-native'
+import {StyleSheet, View, Image, ImageBackground} from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import Constants from 'expo-constants';
+import AnimatedLoader from 'react-native-animated-loader';
+import splash from './assets/splash.png'
 
 import { LogBox } from 'react-native';
 
@@ -30,7 +32,8 @@ import LoadingScreen from './screens/LoadingScreen'
 import SettingsScreen from './screens/SettingsScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import ProductResult from './screens/ProductResult'
-
+import CameraScreen from './screens/CameraScreen'
+import CameraScreenCreate from './screens/CameraScreenCreate'
 
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
@@ -87,7 +90,8 @@ const InventoryStackScreen = (navigation) => (
     <InventoryStack.Screen name="BarcodeScannerScreen" component={BarcodeStackScreen} options={{headerShown: false, title:""}}/>
     <InventoryStack.Screen name="CheckScannerScreen" component={CheckScannerScreen} options={{title: "Scan your item"}}/>
     <InventoryStack.Screen name="ProductDetailsScreen" component={ProductDetailsScreen} options={{title: ""}}/>
-    <InventoryStack.Screen name= "SettingsScreen" component={SettingsScreen} options={{title: "Settings"}}/>
+    <InventoryStack.Screen name= "SettingsScreen" component={SettingsScreen} options={{title: ""}}/>
+    <InventoryStack.Screen name="CameraScreen" component={CameraScreen} options={{title:""}}/>
   </InventoryStack.Navigator>
 )
 
@@ -227,8 +231,11 @@ export default () => {
   }}, [])
 
   //Render Loading Screen
-  if (loginState.isLoading || (!fontsLoaded)) {
-    return <LoadingScreen/>
+  if (loginState.isLoading || (!fontsLoaded) ) {
+    return <View style={{flex:1}}>
+      <ImageBackground source={splash} style={{flex: 1, resizeMode: "cover", justifyContent: "center"}}>
+      </ImageBackground>
+    </View>
   }
 
 
@@ -239,7 +246,8 @@ export default () => {
         <AuthContext.Provider value= {authContext}>
         <userContext.Provider value={loginState.userId}>
               <NavigationContainer style={{marginTop: Constants.statusBarHeight}}>
-                {((loginState.signedIn == 'true')&&(loginState.userId !==null))  ? (
+                {console.log(loginState.userId)}
+                {((loginState.signedIn == 'true')&&(loginState.userId !== null) && (firebase.auth().currentUser))  ? (
                   <View style={{flex:1}}>
                     <StatusBar
                       backgroundColor="#4c29e6"
@@ -249,21 +257,19 @@ export default () => {
                       {{showLabel: false,
                         style: {
                           position: 'absolute',
-                          backgroundColor:"#4c29e6",
-                          borderTopLeftRadius:40,
-                          borderTopRightRadius:40,
-                          height:responsiveScreenHeight(8),
+                          backgroundColor:"white",
+                          height:responsiveScreenHeight(10),
                           ...styles.shadow,
                           justifyContent: "center",
                           alignItems: "center",
+                          borderTopWidth: 0
                         }
                       }}>
                       <Tabs.Screen name= "InventoryScreen" component={InventoryStackScreen} options={({route}) => ({
                         tabBarLabel:() => {return null},
                         tabBarIcon: ({focused}) => (
-                          <View style={{alignItems:"center", backgroundColor: focused? "#fc88a8": "#4c29e6", borderRadius: 20, width:"80%", height:"80%", justifyContent:"center"}}>
-                            <Ionicons size={responsiveHeight(3.2)} style = {{marginRight:"2%"}} color={focused? "#4c29e6": "white"}name= {focused? "home" : "home-outline"}/>
-                            <Text style={{color: '#4c29e6', fontSize: responsiveFontSize(1.5),fontFamily: 'PTSans_400Regular'}}>Home</Text>
+                          <View style={{alignItems:"center", backgroundColor: focused? "#4c29e6": "white", borderRadius: 20, width:"40%", height:"80%", justifyContent:"center"}}>
+                            <Ionicons size={responsiveHeight(3.2)} style = {{marginRight:"2%"}} color={focused? "white": "lightgrey"}name= {focused? "home" : "home"}/>
                           </View>
                         ), 
                         headerShown: false,
@@ -272,9 +278,8 @@ export default () => {
                       <Tabs.Screen name= "PrevBoughtScreen" component={PrevBoughtStackScreen} options={({route}) => ({
                         tabBarLabel:() => {return null},
                         tabBarIcon: ({focused}) => (
-                          <View style={{alignItems:"center", backgroundColor: focused? "#fc88a8": "#4c29e6", borderRadius: 20, width:"80%", height:"80%", justifyContent:"center"}}>
-                            <Ionicons size={responsiveHeight(3.5)} style = {{marginRight:"2%"}} color={focused? "#4c29e6": "white"} name= {focused? "cart" : "cart-outline"}/>
-                            <Text style={{color: '#4c29e6', fontSize: responsiveFontSize(1.5),fontFamily: 'PTSans_400Regular'}}>Previously Bought</Text>
+                          <View style={{alignItems:"center", backgroundColor: focused? "#4c29e6": "white", borderRadius: 20, width:"40%", height:"80%", justifyContent:"center"}}>
+                            <Ionicons size={responsiveHeight(3.5)} style = {{marginRight:"2%"}} color={focused? "white": "lightgrey"} name= {focused? "cart" : "cart"}/>
                           </View>
                         ), 
                         headerShown: false,
@@ -293,6 +298,7 @@ export default () => {
                         <AuthStack.Screen name= "LoginScreen" component ={LoginScreen} options={{title: "Sign In", headerShown: false}}/>
                         <AuthStack.Screen name= "CreateAccountScreen"  component ={CreateAccountScreen} options={{title: ""}} />
                         <AuthStack.Screen name= "ForgotPasswordScreen"  component ={ForgotPasswordScreen} options={{title: ""}} />
+                        <AuthStack.Screen name="CameraScreenCreate" component={CameraScreenCreate} options={{title:""}}/>
                     </AuthStack.Navigator>
                   </View>
                 )}
@@ -313,14 +319,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF'
   },
   shadow: {
-    shadowColor: "#000",
+    shadowColor: "white",
     shadowOffset: {
       width:0,
-      height:10
+      height:0
     },
-    shadowOpacity:0.25,
-    shadowRadius:3.5,
-    elevation:5
+    shadowOpacity:0,
+    shadowRadius:0,
+    elevation:0
   }
 });
 

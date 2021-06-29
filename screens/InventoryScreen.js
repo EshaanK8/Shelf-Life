@@ -1,5 +1,5 @@
 import React, {Component, useState, useEffect} from 'react';
-import {StyleSheet,Text,View,Button, TouchableOpacity, TextInput, FlatList, Modal, ScrollView, Dimensions, ActivityIndicator, Image} from 'react-native';
+import {StyleSheet,Text,View,Button, TouchableOpacity, TextInput, FlatList, Modal, ScrollView, Dimensions, Image} from 'react-native';
 import {SearchBar} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -14,6 +14,7 @@ import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 import { useIsFocused } from "@react-navigation/native";
 //import {addProduct, getProducts, getUserFullData} from '../src/firebase/StorageApi'
+import AnimatedLoader from 'react-native-animated-loader';
 
 import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
 import { Alert } from 'react-native';
@@ -324,7 +325,7 @@ export default ({navigation, route}) => {
     <View style = {{marginTop: Constants.statusBarHeight, backgroundColor: "white", flex: 1}}>
       
       {(isLoading) ? (
-        <ActivityIndicator size="small"/>
+        <AnimatedLoader visible={visible} overlayColor="rgba(255,255,255,0.75)" animationStyle={{width: 100, height: 100, }} speed={1}/>
       ) 
       :(
         <FlatList

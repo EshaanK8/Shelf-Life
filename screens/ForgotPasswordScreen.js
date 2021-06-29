@@ -4,6 +4,7 @@ import{AuthContext} from '../components/context'
 import { firebase } from '../src/firebase/config'
 import LoadingScreen from './LoadingScreen'
 import { useFonts } from 'expo-font';
+import AnimatedLoader from 'react-native-animated-loader';
 
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
@@ -80,7 +81,9 @@ export default function LoginScreen({navigation}) {
 
   //Render Loading Screen
   if (isLoading) {
-    return <LoadingScreen/>
+    return <View style={{position:"absolute",top:0,bottom:0,left:0,right:0, alignItems: "center", justifyContent: "center"}}>
+      <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" source={require("../assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
+    </View>
   }
 
   return (

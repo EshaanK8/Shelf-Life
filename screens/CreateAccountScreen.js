@@ -3,6 +3,8 @@ import { Image, TextInput, TouchableOpacity, View, StyleSheet } from 'react-nati
 import { firebase } from '../src/firebase/config'
 import{AuthContext} from '../components/context'
 import LoadingScreen from './LoadingScreen'
+import profile from '../assets/profile.png'
+import AnimatedLoader from 'react-native-animated-loader';
 
 import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
 import * as eva from '@eva-design/eva';
@@ -16,7 +18,7 @@ import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-
 
 
 
-export default function RegistrationScreen({navigation}) {
+export default function RegistrationScreen({navigation, route}) {
     const [fullName, setFullName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -41,10 +43,23 @@ export default function RegistrationScreen({navigation}) {
           .createUserWithEmailAndPassword(email, password)
           .then((response) => {
               const uid = response.user.uid
+              let photo
+
+              if (route.params) {
+                if (route.params.capturedImage) {
+                  console.log(route.params.capturedImage.uri)
+                  photo = route.params.capturedImage.uri
+                }
+              }
+
+              else {
+                photo = profile
+              }
               const data = {
                   id: uid,
                   email,
                   fullName,
+                  photo
               };
               signIn(data)
               const usersRef = firebase.firestore().collection('users')
@@ -66,7 +81,9 @@ export default function RegistrationScreen({navigation}) {
 
     //Render Loading Screen
     if (isLoading) {
-        return <LoadingScreen/>
+        return <View style={{position:"absolute",top:0,bottom:0,left:0,right:0, alignItems: "center", justifyContent: "center"}}>
+          <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" source={require("../assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
+        </View>
     }
 
     return (
@@ -78,6 +95,9 @@ export default function RegistrationScreen({navigation}) {
                 <Text style ={styles.welcomeText}>Create Account</Text>
               </View>
 
+                <TouchableOpacity onPress={() => navigation.navigate("CameraScreenCreate")}>
+                    {((route.params)) ? (route.params.capturedImage && <Image source={{uri: route.params.capturedImage.uri}} style = {{width: responsiveHeight(8), height: responsiveHeight(8)}}/>) : (<Image source={profile} style = {{width: responsiveHeight(8), height: responsiveHeight(8)}}/>)}
+                </TouchableOpacity>
                 <TextInput
                     style={styles.fullNameInput}
                     placeholder='Full name'
@@ -144,7 +164,7 @@ const styles = StyleSheet.create({
       height: 50,
       margin: 12,
       borderWidth: 1,
-      borderRadius: 10,
+      borderRadius: 50,
       paddingLeft: 15,
       width: "90%",
       borderColor: "lightgrey"
@@ -153,7 +173,7 @@ const styles = StyleSheet.create({
       height: 50,
       margin: 12,
       borderWidth: 1,
-      borderRadius: 10,
+      borderRadius: 50,
       paddingLeft: 15,
       width: "90%",
       borderColor: "lightgrey"
@@ -162,7 +182,7 @@ const styles = StyleSheet.create({
         height: 50,
         margin: 12,
         borderWidth: 1,
-        borderRadius: 10,
+        borderRadius: 50,
         paddingLeft: 15,
         width: "90%",
         borderColor: "lightgrey"
@@ -171,7 +191,7 @@ const styles = StyleSheet.create({
         height: 50,
         margin: 12,
         borderWidth: 1,
-        borderRadius: 10,
+        borderRadius: 50,
         paddingLeft: 15,
         width: "90%",
         borderColor: "lightgrey"

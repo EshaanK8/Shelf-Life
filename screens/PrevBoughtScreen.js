@@ -1,5 +1,5 @@
 import React, {Component, useState, useEffect} from 'react';
-import {StyleSheet,Text,View,Button, TouchableOpacity, Modal, TextInput, FlatList, ScrollView, Dimensions, ActivityIndicator} from 'react-native';
+import {StyleSheet,Text,View,Button, TouchableOpacity, Modal, TextInput, FlatList, ScrollView, Dimensions} from 'react-native';
 import {SearchBar} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';

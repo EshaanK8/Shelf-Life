@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width:"100%",
     backgroundColor: "#4c29e6",
-    height: Dimensions.get('window').height * 0.10,
+    height: Dimensions.get('window').height * 0.08,
     paddingLeft: '5%',
     paddingRight: '5%',
     paddingTop: '5%',

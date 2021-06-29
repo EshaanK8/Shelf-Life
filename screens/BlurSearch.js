@@ -1,5 +1,5 @@
 import React, {Component, useState, useEffect} from 'react';
-import {StyleSheet,Text, Modal, View,Button, TouchableOpacity, Pressable, TextInput, FlatList, ScrollView, Dimensions, ActivityIndicator} from 'react-native';
+import {StyleSheet,Text, Modal, View,Button, TouchableOpacity, Pressable, TextInput, FlatList, ScrollView, Dimensions} from 'react-native';
 import {SearchBar} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import AddProductScreen from './AddProductScreen'
 import { BlurView } from 'expo-blur';
 import SearchCard from '../components/SearchCard';
+import AnimatedLoader from 'react-native-animated-loader';
 
 
 export default (props) => {
@@ -193,7 +194,7 @@ export default (props) => {
         const delayDebounceFn = setTimeout(() => {
         console.log(searchText)
         handleSearch()
-        }, 1000)
+        }, 200)
 
         return () => clearTimeout(delayDebounceFn)
     }, [searchText])
@@ -212,16 +213,6 @@ export default (props) => {
                 <View style = {styles.listContainer}>
 
                 {(() => {
-                    if (isLoading) {
-                        return (
-                            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                                    <ActivityIndicator size="large" color="rgb(142, 228, 175)"/>
-                            </View>
-                            
-                        )
-                    } 
-
-                    else {
                         if (searchText.length === 0) {
                             return (
                                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -253,7 +244,7 @@ export default (props) => {
                                     extraData = {modalVisible}
                                 />
                             )}
-                    } 
+
                 })()}
                 </View>
                 <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => {setModalVisible(!modalVisible);}}>
@@ -285,7 +276,8 @@ const styles = StyleSheet.create({
     width:"100%",
     flex:0.05,
     justifyContent: "center",
-    marginLeft: responsiveWidth(5)
+    marginLeft: responsiveWidth(5),
+    marginTop:"5%"
   },
   listContainer: {
     width: "100%",

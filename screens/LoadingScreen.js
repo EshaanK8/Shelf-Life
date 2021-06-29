@@ -1,9 +1,10 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import {StyleSheet, Text, View} from "react-native";
+import AnimatedLoader from 'react-native-animated-loader';
 
 const App = () => (
   <View style={[styles.container, styles.horizontal]}>
-    <ActivityIndicator size="large" color="#00ff00" />
+    <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" source={require("../assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
   </View>
 );
 
