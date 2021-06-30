@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "InventoryAppGood",
-    "slug": "InventoryAppGood",
+    "name": "Shelf Life",
+    "slug": "shelflife",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,6 +27,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "Welcome to Shelf Life! Keep track of your home's ever-changing food inventory with our powerful mobile app.",
+    "githubUrl": "https://github.com/EshaanK8/InventoryApp"
   }
 }
