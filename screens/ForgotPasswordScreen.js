@@ -1,5 +1,5 @@
 import React, { Component, useState} from 'react';
-import {StyleSheet,View, TextInput, TouchableOpacity, Alert} from 'react-native';
+import {StyleSheet,View, TextInput, TouchableOpacity, useWindowDimensions, Alert} from 'react-native';
 import{AuthContext} from '../components/context'
 import { firebase } from '../src/firebase/config'
 import LoadingScreen from './LoadingScreen'
@@ -21,7 +21,7 @@ export default function LoginScreen({navigation}) {
   const [loaded] = useFonts({
     Lato: require('../assets/Lato/Lato-Regular.ttf'),
   });
-
+  const windowHeight = useWindowDimensions().height;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = React.useState(false)
@@ -88,7 +88,7 @@ export default function LoginScreen({navigation}) {
 
   return (
     <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
-      <Layout style={styles.container}>
+      <Layout style={[styles.container, {minHeight: Math.round(windowHeight)}]}>
           <Layout style={styles.mainLayout} keyboardShouldPersistTaps="always">
 
               <View style={styles.welcomeView}>

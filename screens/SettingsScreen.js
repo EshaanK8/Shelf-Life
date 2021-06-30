@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect, useFocusEffect, useRef} from 'react';
-import {StyleSheet,Text,View, TouchableOpacity,TextInput, Image, Modal, Alert} from 'react-native';
+import {StyleSheet,Text,View, TouchableOpacity,TextInput, Image, Modal, Alert, useWindowDimensions} from 'react-native';
 import {responsiveHeight,responsiveWidth,responsiveFontSize, responsiveScreenHeight} from "react-native-responsive-dimensions";
 import { Button } from '@ui-kitten/components';
 import InventoryScreen from './InventoryScreen'
@@ -19,6 +19,7 @@ export default ({route, navigation}) => {
   const [isLoading, setIsLoading] = React.useState(false)
   const user = React.useContext(userContext)
   const [userFullData, setUserFullData] = useState([])
+  const windowHeight = useWindowDimensions().height;
 
   const [email, setEmail] = useState()
   const [name, setName] = useState()
@@ -168,7 +169,7 @@ export default ({route, navigation}) => {
   }
 
   return (
-      <View style={styles.container}>
+      <View style={[styles.container, { minHeight: Math.round(windowHeight) }]}>
         <View style={styles.headBox}>
           <View style={styles.settingsTextBox}>
             <Text style={styles.settingsText}>Settings</Text>
@@ -214,7 +215,7 @@ export default ({route, navigation}) => {
         </View>
 
         <Modal animationType="slide" visible={modalVisible} onRequestClose={() => {setModalVisible(!modalVisible)}}>
-          <View style = {styles.container}>
+          <View style = {[styles.container, { minHeight: Math.round(windowHeight) }]}>
             <View style={styles.headerContainer}>
               <TouchableOpacity style = {{flex:0.5, justifyContent:"center"}} onPress={() => setModalVisible(false)}>
                   <Ionicons name='arrow-back-outline' color="black" size={30}/>
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF'
+    backgroundColor: '#F5FCFF',
   },
   headerContainer: {
     flexDirection: "column",

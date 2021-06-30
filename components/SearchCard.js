@@ -18,10 +18,10 @@ export default (props) => {
                  <View style ={styles.imageContainer}>
                     <View style = {styles.imageSmallerContainer}>
                         {(props.item.image_front_small_url) ? (
-                            <Image style={{width: "80%", height: "80%"}} source={{uri: props.item.image_front_small_url}}/>
+                            <Image style={{width: "70%", height: "80%", borderRadius:10}} source={{uri: props.item.image_front_small_url}}/>
                         )
                         : (
-                            <Image style={{width: "80%", height: "80%"}} source={diet}/>
+                            <Image style={{width: "70%", height: "80%", borderRadius:10}} source={diet}/>
                         )}
                     </View>
                 </View>
@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
         paddingRight:"5%"
     },
     nameText: {
-        fontSize: responsiveFontSize(1.5),
-        fontFamily: 'PTSans_700Bold',
+        fontSize: responsiveFontSize(1.8),
+        fontFamily: 'PTSans_400Regular',
         marginTop: "8%",
         marginLeft: "8%",
     },

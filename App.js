@@ -75,7 +75,7 @@ const BarcodeStackScreen = (navigation) => (
       component={BarcodeScannerScreen}
       options={{title:"Scan Your Barcode"}}
     />
-    <BarcodeStack.Screen name="ProductResult" component={ProductResult} options={{title:"Add Product"}}/>
+    <BarcodeStack.Screen name="ProductResult" component={ProductResult} options={{title:""}}/>
   </BarcodeStack.Navigator>
 )
 
@@ -258,7 +258,7 @@ export default () => {
                         style: {
                           position: 'absolute',
                           backgroundColor:"white",
-                          height:responsiveScreenHeight(10),
+                          height:responsiveScreenHeight(8),
                           ...styles.shadow,
                           justifyContent: "center",
                           alignItems: "center",

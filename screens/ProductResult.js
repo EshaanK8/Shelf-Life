@@ -1,5 +1,5 @@
 import React, { Component, useState} from 'react';
-import {StyleSheet,View, TouchableOpacity, Alert, TextInput, Dimensions, Animated, Image, ImageBackground} from 'react-native';
+import {StyleSheet,View, TouchableOpacity, Alert, TextInput, useWindowDimensions, Dimensions, Animated, Image, ImageBackground} from 'react-native';
 import {responsiveHeight,responsiveWidth,responsiveFontSize, responsiveScreenHeight} from "react-native-responsive-dimensions";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Constants from 'expo-constants';
@@ -12,6 +12,7 @@ import AnimatedLoader from 'react-native-animated-loader';
 
 export default ({ route, navigation }) => {
     const { product } = route.params;
+    const windowHeight = useWindowDimensions().height;
 
     var isHidden = true;
     const [amount, setAmount] = useState(0)
@@ -118,7 +119,7 @@ export default ({ route, navigation }) => {
 
     
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {minHeight: Math.round(windowHeight)}]}>
             {(!product.hasOwnProperty('product_name')) ? (
                 <View style={styles.container}>
                     <ImageBackground source={background} style={{flex:1, resizeMode: "cover", alignItems: "center",  width: "100%"}}>
@@ -129,23 +130,39 @@ export default ({ route, navigation }) => {
                         <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" source={require("../assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
                     </View> : null}
                     
-                    <TextInput
-                        style={styles.emailInput}
-                        placeholder='Kodiak Cakes'
-                        placeholderTextColor="#aaaaaa"
-                        onChangeText={(text) => setProdName(text)}
-                        value={prodName}
-                        underlineColorAndroid="transparent"
-                        autoCapitalize="none"
-                    />
-                    <Text>Barcode</Text>
-                    <TextInput
-                        style={styles.passwordInput}
-                        onChangeText={(text) => setBarcode(text)}
-                        value={barcode}
-                        underlineColorAndroid="transparent"
-                        autoCapitalize="none"
-                    />
+                    <View style={{width:"100%", flex:2}}>
+                        <View style={{flex:1.2}}>
+                            <Text style={styles.sorryText}>Sorry, we couldn't find your product.</Text>
+                            <Text style={styles.enterText}>Please enter the product's details, and we'll add it to our database</Text>
+                        </View>
+                        
+                        <View style={{flex:1, justifyContent: "flex-end"}}>
+                            <Text style={{marginLeft:"5%", fontSize: responsiveFontSize(3), fontFamily: 'PTSans_700Bold'}}>Name</Text>
+                            <TextInput
+                                style={styles.emailInput}
+                                placeholder='Kodiak Cakes'
+                                placeholderTextColor="#aaaaaa"
+                                onChangeText={(text) => setProdName(text)}
+                                value={prodName}
+                                underlineColorAndroid="transparent"
+                                autoCapitalize="none"
+                                inputStyle={{fontFamily: 'PTSans_400Regular'}}
+                            />
+                        </View>
+                        
+                        <View style={{flex:1, paddingTop:"3%"}}>
+                            <Text style={{marginLeft:"5%", fontSize: responsiveFontSize(3), fontFamily: 'PTSans_700Bold'}}>Barcode</Text>
+                            <TextInput
+                                style={styles.passwordInput}
+                                onChangeText={(text) => setBarcode(text)}
+                                value={barcode}
+                                underlineColorAndroid="transparent"
+                                autoCapitalize="none"
+                                inputStyle={{fontFamily: 'PTSans_400Regular'}}
+                            />
+                        </View>
+                    </View>
+
                     <View style = {styles.submitContainer}>
                         <Button onPress={uploadProduct} size='medium' status='danger' style={{width: "80%"}}><Text style ={{fontSize: responsiveFontSize(2), fontFamily: 'PTSans_700Bold', color: "white"}}>Submit</Text></Button>
                     </View>
@@ -232,10 +249,10 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     submitContainer: {
-        flex:2,
+        flex:1,
         width: '100%',
         alignItems: 'center',
-        paddingTop:"5%"
+        paddingTop:"5%",
     },
     removeIconContainer: {
         marginRight: "auto",
@@ -297,11 +314,10 @@ const styles = StyleSheet.create({
         flexDirection: "column",
     },
     emailInput: {
-        marginTop: '20%',
         height: 50,
         margin: 12,
         borderWidth: 1,
-        borderRadius: 10,
+        borderRadius: 50,
         paddingLeft: 15,
         width: "90%",
         borderColor: "lightgrey"
@@ -310,9 +326,22 @@ const styles = StyleSheet.create({
         height: 50,
         margin: 12,
         borderWidth: 1,
-        borderRadius: 10,
+        borderRadius: 50,
         paddingLeft: 15,
         width: "90%",
         borderColor: "lightgrey"
+    },
+    sorryText: {
+        color: "black",
+        fontSize: responsiveFontSize(3.5),
+        fontFamily: 'PTSans_700Bold',
+        marginLeft:"5%",
+      },
+    enterText: {
+        color: "black",
+        fontSize: responsiveFontSize(2.5),
+        fontFamily: 'PTSans_400Regular',
+        marginLeft:"5%",
+        marginTop: "8%"
     },
 });

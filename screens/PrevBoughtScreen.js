@@ -1,5 +1,5 @@
 import React, {Component, useState, useEffect} from 'react';
-import {StyleSheet,Text,View,Button, TouchableOpacity, Modal, TextInput, FlatList, ScrollView, Dimensions} from 'react-native';
+import {StyleSheet,Text,View,Button, TouchableOpacity, Modal, useWindowDimensions, TextInput, FlatList, ScrollView, Dimensions} from 'react-native';
 import {SearchBar} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,6 +21,7 @@ export default ({navigation}) => {
   const isFocused = useIsFocused();
   const [modalVisible, setModalVisible] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
+  const windowHeight = useWindowDimensions().height;
 
   //Product Storage
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -246,7 +247,7 @@ export default ({navigation}) => {
 
   return (
 
-    <View style = {{paddingTop: Constants.statusBarHeight, paddingLeft:"5%", paddingRight:"5%", backgroundColor: "white", flex: 1}}>
+    <View style = {{paddingTop: Constants.statusBarHeight, paddingLeft:"5%", paddingRight:"5%", backgroundColor: "white", flex: 1,  minHeight: Math.round(windowHeight)}}>
       <View style={styles.bigTitleContainer}>
         <Text style={styles.title}>Previously Bought Products 🧀</Text>
       </View>

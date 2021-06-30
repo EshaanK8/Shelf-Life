@@ -332,7 +332,7 @@ export default ({navigation, route}) => {
           ListHeaderComponent= {
           <View>
             <ScanContainer show = {!searchBarToggle}handleAddButton = {handleAddButton} handleSearchButton = {handleSearchButton} handleSettingsButton = {handleSettingsButton} fullName = {userFullData.fullName}/>
-            {searchBarToggle && <SearchBar placeholder="Sourdough Bread" lightTheme round value = {searchText} onChangeText={(text) => searchFilterFunction(text)} autoCorrect={false} containerStyle = {styles.searchBar}/>}
+            {searchBarToggle && <SearchBar placeholder="Sourdough Bread" lightTheme round value = {searchText} onChangeText={(text) => searchFilterFunction(text)} autoCorrect={false} containerStyle = {styles.searchBar} inputStyle={{fontFamily: 'PTSans_400Regular'}}/>}
           </View>}
           data={data} 
           renderItem={({item}) => {
@@ -432,7 +432,8 @@ const styles = StyleSheet.create({
     borderWidth: 0, //no effect
     shadowColor: 'white', //no effect
     borderBottomColor: 'transparent',
-    borderTopColor: 'transparent'
+    borderTopColor: 'transparent',
+    borderRadius:50
   },
   nonBlurredContent: {
     width:"100%",

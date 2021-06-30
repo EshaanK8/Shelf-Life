@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Image, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native'
+import { Image, TextInput, TouchableOpacity, View, useWindowDimensions, StyleSheet } from 'react-native'
 import { firebase } from '../src/firebase/config'
 import{AuthContext} from '../components/context'
 import LoadingScreen from './LoadingScreen'
@@ -19,6 +19,7 @@ import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-
 
 
 export default function RegistrationScreen({navigation, route}) {
+    const windowHeight = useWindowDimensions().height;  
     const [fullName, setFullName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -88,7 +89,7 @@ export default function RegistrationScreen({navigation, route}) {
 
     return (
     <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
-      <Layout style={styles.container}>
+      <Layout style={[styles.container,{minHeight: Math.round(windowHeight)}]}>
           <Layout style={styles.mainLayout} keyboardShouldPersistTaps="always">
 
               <View style={styles.welcomeView}>

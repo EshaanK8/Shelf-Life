@@ -208,7 +208,7 @@ export default (props) => {
                     </TouchableOpacity>
                 </View>
                 
-                <SearchBar placeholder="Pancakes" lightTheme round value = {searchText} onChangeText={(text) => setSearchText(text)} autoCorrect={false}containerStyle = {styles.searchBar}/>
+                <SearchBar placeholder="Pancakes" lightTheme round value = {searchText} onChangeText={(text) => setSearchText(text)} autoCorrect={false} containerStyle = {styles.searchBar} inputStyle={{fontFamily: 'PTSans_400Regular'}}/>
 
                 <View style = {styles.listContainer}>
 
@@ -216,7 +216,7 @@ export default (props) => {
                         if (searchText.length === 0) {
                             return (
                                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                                    <Text  style= {{color: "grey", fontSize: responsiveScreenFontSize(2)}}>Search for a product</Text>
+                                    <Text  style= {{color: "grey", fontSize: responsiveScreenFontSize(2), fontFamily: 'PTSans_400Regular'}}>Search for a product</Text>
                                 </View>
                                 
                             )
@@ -226,7 +226,7 @@ export default (props) => {
                             if (data.length === 0) {
                                 return (
                                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                                        <Text style= {{color: "grey", fontSize: responsiveScreenFontSize(2)}}>No Items</Text>
+                                        <Text style= {{color: "grey", fontSize: responsiveScreenFontSize(2), fontFamily: 'PTSans_400Regular'}}>No Items</Text>
                                     </View> 
                                 )
                             }
@@ -291,7 +291,8 @@ const styles = StyleSheet.create({
     width: "100%",
     shadowColor: 'white', //no effect
     borderBottomColor: 'transparent',
-    borderTopColor: 'transparent'
+    borderTopColor: 'transparent',
+    borderRadius:50
   },
 
  backButtonContainer: {
