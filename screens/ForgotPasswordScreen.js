@@ -1,18 +1,15 @@
-import React, { Component, useState} from 'react';
-import {StyleSheet,View, TextInput, TouchableOpacity, useWindowDimensions, Alert} from 'react-native';
-import{AuthContext} from '../components/context'
+import React, {useState} from 'react';
+import {StyleSheet,View, TextInput,useWindowDimensions, TouchableOpacity} from 'react-native';
 import { firebase } from '../src/firebase/config'
-import LoadingScreen from './LoadingScreen'
 import { useFonts } from 'expo-font';
 import AnimatedLoader from 'react-native-animated-loader';
 
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
-import { default as theme } from '../custom-theme.json'; // <-- Import app theme
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 import { default as mapping } from '../mapping.json'; // <-- Import app mapping
 
 import GradientButton from 'react-native-gradient-buttons';
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import {responsiveHeight, responsiveFontSize} from "react-native-responsive-dimensions";
 
 
 
@@ -23,52 +20,14 @@ export default function LoginScreen({navigation}) {
   });
   const windowHeight = useWindowDimensions().height;
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = React.useState(false)
-  const {signIn} = React.useContext(AuthContext) //Get the signIn function from the AuthContext
   const [showDone, setShowDone] = useState(false);
 
-
-  
-
-  const onFooterLinkPress = () => {
-    navigation.push('CreateAccountScreen')
-  }
-  
-
-  const doSignIn = () => {
-    console.log("start")
-    setIsLoading(true)
-    firebase
-    .auth()
-    .signInWithEmailAndPassword(email, password)
-    .then((response) => {
-      console.log("Logged in!")
-      //firebase.firestore().settings({ experimentalForceLongPolling: true });
-
-        const uid = response.user.uid
-        const usersRef = firebase.firestore().collection('users')
-        usersRef
-            .doc(uid)
-            .get()
-            .then(firestoreDocument => {
-                if (!firestoreDocument.exists) {
-                    alert("User does not exist anymore.")
-                    return;
-                }
-                const user = firestoreDocument.data()
-                signIn(user)
-            })
-            .catch(error => {
-                setIsLoading(false)
-                alert(error)
-            })
-    })
-    .catch(error => {
-        setIsLoading(false)
-        alert(error)
-    })
-  }
+  const AppButton = ({ onPress, title }) => (
+    <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
+      <Text style={styles.appButtonText}>{title}</Text>
+    </TouchableOpacity>
+  );
 
   forgotPassword = (Email) => {
     firebase.auth().sendPasswordResetEmail(Email)
@@ -99,8 +58,8 @@ export default function LoginScreen({navigation}) {
                 <TextInput
                     style={styles.emailInput}
                     placeholder='E-mail'
-                    placeholderTextColor="#aaaaaa"
-                    onChangeText={(text) => setEmail(text)}
+                    placeholderTextColor="white"
+                    onChangeText={(text) => setEmail(text.replace(/\s/g, ''))}
                     value={email}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
@@ -110,7 +69,7 @@ export default function LoginScreen({navigation}) {
                     {showDone && <Text style={{color: '#b522f2', fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Email sent. Please check your email.</Text>}
                 </View>
             
-                <GradientButton text="Send Email" width='90%' violetPink textStyle={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }} impact radius={10} height={responsiveHeight(5)} style={{marginTop:'15%', marginBottom:'2%',}} onPressAction={forgotPassword(email)}/>
+                <AppButton title="Send Email" onPress={forgotPassword(email)}/>
           </Layout>
       </Layout>
     </ApplicationProvider>
@@ -128,7 +87,7 @@ const styles = StyleSheet.create({
     height: 50,
     margin: 12,
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 50,
     paddingLeft: 15,
     width: "90%",
     borderColor: "lightgrey"
@@ -146,7 +105,8 @@ const styles = StyleSheet.create({
   mainLayout: {
      flex: 1, 
      width: '100%',
-     alignItems: 'center'
+     alignItems: 'center',
+     backgroundColor: "#4c29e6"
   },
   signInButton: {
     marginTop:'15%',
@@ -168,26 +128,38 @@ const styles = StyleSheet.create({
 },
 
 welcomeView: {
-  marginTop:"30%",
+  marginTop:"20%",
   width: "90%",
   flexDirection: 'column', 
   alignItems: 'flex-start' 
 },
 
 welcomeText: {
-  fontWeight: "bold",
-  color: "black",
+  color: "white",
   fontSize: 25,
   fontSize: responsiveFontSize(3),
   fontFamily: 'PTSans_700Bold',
 },
 signInText: {
-  fontWeight: "bold",
-  color: "lightgrey",
+  color: "white",
   fontSize: 20,
   marginTop: "1%",
   fontSize: responsiveFontSize(2.9),
+  fontFamily: 'PTSans_400Regular',
+},
+appButtonContainer: {
+  backgroundColor: "#E100B2",
+  borderRadius: 30,
+  paddingVertical: "4%",
+  paddingHorizontal: "6%",
+  width:"70%",
+  marginTop:"10%"
+},
+appButtonText: {
+  fontSize: responsiveFontSize(2.2),
+  color: "#fff",
   fontFamily: 'PTSans_700Bold',
+  alignSelf: "center",
 },
 
 });

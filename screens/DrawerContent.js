@@ -1,10 +1,8 @@
 import React from 'react'
-import {View, Text, StyleSheet, Button} from 'react-native'
+import {View, Text} from 'react-native'
 import{AuthContext} from '../components/context'
 import {DrawerItem, DrawerContentScrollView} from '@react-navigation/drawer'
 import { firebase } from '../src/firebase/config'
-import LoadingScreen from './LoadingScreen'
-import { CommonActions } from "@react-navigation/native";
 import AnimatedLoader from 'react-native-animated-loader';
 
 

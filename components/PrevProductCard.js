@@ -1,16 +1,13 @@
-import React, {Component, useState, useEffect} from 'react';
-import { StyleSheet, View, Image, TouchableOpacity, Dimensions, Animated, TouchableHighlight } from 'react-native';
-import { Text, Card, Divider } from 'react-native-elements';
-import ItemsLeftPageScreen from '../screens/ItemsLeftPageScreen';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet, View, Image, TouchableOpacity} from 'react-native';
+import { Text} from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useRoute} from '@react-navigation/native';
 import {userContext} from './userContext.js';
 import { firebase } from '../src/firebase/config'
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import {responsiveHeight,responsiveFontSize} from "react-native-responsive-dimensions";
 import diet from '../assets/diet.png'
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { RectButton } from 'react-native-gesture-handler';
 
 
 export default (props) => {

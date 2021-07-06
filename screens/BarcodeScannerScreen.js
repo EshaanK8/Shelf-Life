@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import Constants from 'expo-constants'
-import ProductResult from './ProductResult'
-import { Alert } from 'react-native';
-import { Button, Text } from '@ui-kitten/components';
+import { Text } from '@ui-kitten/components';
 import GradientButton from 'react-native-gradient-buttons';
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import {responsiveHeight,responsiveFontSize} from "react-native-responsive-dimensions";
 
 import AnimatedLoader from 'react-native-animated-loader';
+import { Alert } from 'react-native';
 
 export default ({navigation}) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState("");
   const [isLoading, setIsLoading] = useState("");
   const [product, setProduct] = useState("");
@@ -28,7 +25,7 @@ export default ({navigation}) => {
   const handleBarCodeScanned = ({ type, data }) => {
     setData(data)
     setScanned(true);
-    //check item
+
     let url = "https://world.openfoodfacts.org/api/v0/product/"+data+".json"
     setIsLoading(true)
     
@@ -49,13 +46,11 @@ export default ({navigation}) => {
 
         navigation.navigate("ProductResult", {product})
         setProduct(product)
-        //setModalVisible(!modalVisible)
     })
     .catch(error => {
         setIsLoading(false)
         console.log(error)
     })
-    //navigation.navigate("ProductResult", {product: {name:"Eshaan"}})
   }
 
   const checkItem = (data) => {

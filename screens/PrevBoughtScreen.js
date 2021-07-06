@@ -1,17 +1,14 @@
-import React, {Component, useState, useEffect} from 'react';
-import {StyleSheet,Text,View,Button, TouchableOpacity, Modal, useWindowDimensions, TextInput, FlatList, ScrollView, Dimensions} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {StyleSheet,Text,View,TouchableOpacity, Modal, useWindowDimensions, TextInput, FlatList, ScrollView, Dimensions} from 'react-native';
 import {SearchBar} from 'react-native-elements'
-import Icon from 'react-native-vector-icons/Fontisto';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Constants from 'expo-constants';
 import PrevProductCard from '../components/PrevProductCard';
-import ScanContainer from '../components/ScanContainer';
 import {userContext} from '../components/userContext.js';
 import { firebase } from '../src/firebase/config'
 import { useIsFocused } from "@react-navigation/native";
 import PrevProductDetailsScreen from './PrevProductDetailsScreen';
 
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import {responsiveFontSize, responsiveScreenHeight} from "react-native-responsive-dimensions";
 
 export default ({navigation}) => {
   const user = React.useContext(userContext)
@@ -23,14 +20,9 @@ export default ({navigation}) => {
   const [currentItem, setCurrentItem] = useState(null);
   const windowHeight = useWindowDimensions().height;
 
-  //Product Storage
-  const [selectedIndex, setSelectedIndex] = useState(0)
-
   //Search Bar
-  const [error, setError] = useState(null)
   const [data, setData] = useState([])
   const [searchText, setSearchText] = useState("")
-  const [searchBarToggle, setSearchBarToggle] = useState(false)
 
 
   //Search Bar function
@@ -62,21 +54,6 @@ export default ({navigation}) => {
   function createDocument() {
     console.log("Hello" + firebase.firestore().collection('users').doc(user).collection('products').doc("x0ShX57DOKR503mqIqlI").name)
     return firebase.firestore().collection('users').doc(user).collection('products').doc()
-  }
-
-  const addPrevProduct = (product, docRef) => {
-    docRef.set({
-      name: product.name,
-      id: product.id,
-      dateAdded:  firebase.firestore.FieldValue.serverTimestamp(),
-      image: product.image,
-      amount: product.amount,
-      ingredients: product.ingredients,
-      allergens: product.allergens
-    })
-    const newProductList = [...productList, product]
-    setProductList(newProductList)
-    setData(newProductList)
   }
 
   const addProduct = (product, docRef) => {
@@ -262,6 +239,16 @@ export default ({navigation}) => {
         />
         <FlatList
           data={data} 
+          contentContainerStyle={{
+            ...Platform.select({
+              ios: {
+                paddingBottom:responsiveScreenHeight(12),
+              },
+              android: {
+                paddingBottom:responsiveScreenHeight(8),
+              }
+            })
+          }}
           renderItem={({item}) => {
               return (
               <TouchableOpacity onPress = {()=>handleItemPressed(item)}>

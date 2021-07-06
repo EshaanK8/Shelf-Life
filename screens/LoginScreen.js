@@ -1,15 +1,13 @@
-import React, { Component, useState} from 'react';
-import {StyleSheet,View, TextInput, TouchableOpacity, useWindowDimensions, Alert} from 'react-native';
+import React, { useState} from 'react';
+import {StyleSheet,View, TextInput, TouchableOpacity, useWindowDimensions, Button, Alert} from 'react-native';
 import{AuthContext} from '../components/context'
 import { firebase } from '../src/firebase/config'
-import LoadingScreen from './LoadingScreen'
 import { useFonts } from 'expo-font';
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import {responsiveHeight,responsiveFontSize} from "react-native-responsive-dimensions";
 import AnimatedLoader from 'react-native-animated-loader';
 
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
-import { default as theme } from '../custom-theme.json'; // <-- Import app theme
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 import { default as mapping } from '../mapping.json'; // <-- Import app mapping
 
 import GradientButton from 'react-native-gradient-buttons';
@@ -27,15 +25,19 @@ export default function LoginScreen({navigation}) {
   const [isLoading, setIsLoading] = React.useState(false)
   const {signIn} = React.useContext(AuthContext) //Get the signIn function from the AuthContext
 
+  const AppButton = ({ onPress, title }) => (
+    <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
+      <Text style={styles.appButtonText}>{title}</Text>
+    </TouchableOpacity>
+  );
   
 
   const onFooterLinkPress = () => {
-    navigation.push('CreateAccountScreen')
+    navigation.navigate('CreateAccountScreen')
   }
   
 
   const doSignIn = () => {
-    console.log("start")
     setIsLoading(true)
     firebase
     .auth()
@@ -72,8 +74,8 @@ export default function LoginScreen({navigation}) {
 
   //Render Loading Screen
   if (isLoading) {
-    return <View style={{position:"absolute",top:0,bottom:0,left:0,right:0, alignItems: "center", justifyContent: "center"}}>
-      <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" source={require("../assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
+    return <View style={{position:"absolute",top:0,bottom:0,left:0,right:0, alignItems: "center", justifyContent: "center", backgroundColor: "#4c29e6"}}>
+      <AnimatedLoader visible={true} overlayColor="#4c29e6" source={require("../assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
     </View>
   }
 
@@ -83,41 +85,43 @@ export default function LoginScreen({navigation}) {
           <Layout style={styles.mainLayout} keyboardShouldPersistTaps="always">
 
               <View style={styles.welcomeView}>
-                <Text style ={styles.welcomeText}>Welcome to InventoryApp,</Text>
+                <Text style ={styles.welcomeText}>Your pantry awaits you</Text>
                 <Text style ={styles.signInText}>Sign in to continue</Text>
               </View>
 
                 <TextInput
                     style={styles.emailInput}
                     placeholder='E-mail'
-                    placeholderTextColor="#aaaaaa"
-                    onChangeText={(text) => setEmail(text)}
+                    placeholderTextColor="white"
+                    onChangeText={(text) => setEmail(text.replace(/\s/g, ''))}
                     value={email}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
+                    color="white"
                 />
                 <TextInput
                     style={styles.passwordInput}
-                    placeholderTextColor="#aaaaaa"
+                    placeholderTextColor="white"
                     secureTextEntry
                     placeholder='Password'
-                    onChangeText={(text) => setPassword(text)}
+                    onChangeText={(text) => setPassword(text.replace(/\s/g, ''))}
                     value={password}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
+                    color="white"
                 />
                 <View style={styles.forgotText}>
-                  <TouchableOpacity onPress = {() => navigation.push('ForgotPasswordScreen')}>
-                    <Text style={{color: '#b522f2', fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Forgot Password?</Text>
+                  <TouchableOpacity onPress = {() => navigation.navigate('ForgotPasswordScreen')}>
+                    <Text style={{color: 'white', fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Forgot Password?</Text>
                   </TouchableOpacity>
                 </View>
 
-                <GradientButton text="Log in" width='90%' violetPink  textStyle={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }} impact radius={10} height={responsiveHeight(5)} style={{marginTop:'15%', marginBottom:'2%',}} onPressAction={() => doSignIn()}/>
+                <AppButton title="Sign in" onPress={() => doSignIn()}/>
 
                 <View style={styles.createText}>
-                  <Text style={{fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Don't have an account? </Text>
+                  <Text style={{fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular', color:"white"}}>Don't have an account? </Text>
                   <TouchableOpacity onPress = {onFooterLinkPress}>
-                    <Text style={{color: '#b522f2', fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Sign up</Text>
+                    <Text style={{color: '#FF0079', fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Sign up</Text>
                   </TouchableOpacity>
                 </View>
           </Layout>
@@ -135,20 +139,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF'
   },
   emailInput: {
+    fontFamily: 'PTSans_400Regular',
     marginTop: '20%',
     height: 50,
     margin: 12,
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 50,
     paddingLeft: 15,
     width: "90%",
     borderColor: "lightgrey"
   },
   passwordInput: {
+    fontFamily: 'PTSans_400Regular',
     height: 50,
     margin: 12,
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 50,
     paddingLeft: 15,
     width: "90%",
     borderColor: "lightgrey"
@@ -156,7 +162,8 @@ const styles = StyleSheet.create({
   mainLayout: {
      flex: 1, 
      width: '100%',
-     alignItems: 'center'
+     alignItems: 'center',
+     backgroundColor: "#4c29e6",
   },
   signInButton: {
     marginTop:'15%',
@@ -185,22 +192,36 @@ forgotText: {
   alignItems: "flex-end",
 },
 welcomeView: {
-  marginTop:"30%",
+  marginTop:"3%",
   width: "90%",
   flexDirection: 'column', 
   alignItems: 'flex-start' 
 },
 
 welcomeText: {
-  color: "black",
-  fontSize: responsiveFontSize(3),
+  color: "white",
+  fontSize: responsiveFontSize(3.5),
   fontFamily: 'PTSans_700Bold',
 },
 signInText: {
-  color: "lightgrey",
-  marginTop: "1%",
-  fontSize: responsiveFontSize(2.9),
-  fontFamily: 'PTSans_700Bold',
+  color: "white",
+  marginTop: "3%",
+  fontSize: responsiveFontSize(3.4),
+  fontFamily: 'PTSans_400Regular',
 },
+appButtonContainer: {
+  backgroundColor: "#E100B2",
+  borderRadius: 30,
+  paddingVertical: "4%",
+  paddingHorizontal: "6%",
+  width:"70%",
+  marginTop:"20%"
+},
+appButtonText: {
+  fontSize: responsiveFontSize(2.2),
+  color: "#fff",
+  fontFamily: 'PTSans_700Bold',
+  alignSelf: "center",
+}
 
 });

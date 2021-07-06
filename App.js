@@ -1,45 +1,38 @@
 import Expo from 'expo';
 import { StatusBar } from 'expo-status-bar'
-import React, {useState, useEffect} from 'react'
-import {StyleSheet, View, Image, ImageBackground} from 'react-native'
+import React, {useEffect} from 'react'
+import {StyleSheet, View, Platform} from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import AnimatedLoader from 'react-native-animated-loader';
-import splash from './assets/splash.png'
 
 import { LogBox } from 'react-native';
 
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
-import { default as theme } from './custom-theme.json'; // <-- Import app theme
+import { ApplicationProvider} from '@ui-kitten/components';
 import { default as mapping } from './mapping.json'; // <-- Import app mapping
 
-import { CommonActions } from '@react-navigation/native';
 import { firebase } from './src/firebase/config'
 
 import LoginScreen from './screens/LoginScreen'
+import WelcomeScreen from './screens/WelcomeScreen'
 import ProductDetailsScreen from './screens/ProductDetailsScreen'
-import ConfirmationPageScreen from './screens/ConfirmationPageScreen'
 import InventoryScreen from './screens/InventoryScreen'
 import BarcodeScannerScreen from './screens/BarcodeScannerScreen'
 import CheckScannerScreen from './screens/CheckScannerScreen'
-import ItemsLeftPageScreen from './screens/ItemsLeftPageScreen'
 import CreateAccountScreen from './screens/CreateAccountScreen'
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen'
 import PrevBoughtScreen from './screens/PrevBoughtScreen'
-import LoadingScreen from './screens/LoadingScreen'
 import SettingsScreen from './screens/SettingsScreen'
-import ProfileScreen from './screens/ProfileScreen'
 import ProductResult from './screens/ProductResult'
 import CameraScreen from './screens/CameraScreen'
 import CameraScreenCreate from './screens/CameraScreenCreate'
+import IntroSlider from './screens/IntroSlider'
 
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 import {AuthContext} from './components/context.js'
 import {userContext} from './components/userContext.js';
-import {CardContext} from './components/cardContext.js';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
@@ -50,7 +43,7 @@ import {
   PTSans_700Bold,
   PTSans_700Bold_Italic,
 } from '@expo-google-fonts/pt-sans';
-import { responsiveHeight, responsiveFontSize, responsiveScreenHeight } from 'react-native-responsive-dimensions';
+import { responsiveHeight, responsiveScreenHeight } from 'react-native-responsive-dimensions';
 
 
 
@@ -231,10 +224,10 @@ export default () => {
   }}, [])
 
   //Render Loading Screen
+  
   if (loginState.isLoading || (!fontsLoaded) ) {
-    return <View style={{flex:1}}>
-      <ImageBackground source={splash} style={{flex: 1, resizeMode: "cover", justifyContent: "center"}}>
-      </ImageBackground>
+    return <View style={{position:"absolute",top:0,bottom:0,left:0,right:0, alignItems: "center", justifyContent: "center", backgroundColor: "#4c29e6"}}>
+      <AnimatedLoader visible={true} overlayColor="#4c29e6" source={require("./assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
     </View>
   }
 
@@ -256,9 +249,16 @@ export default () => {
                     <Tabs.Navigator tabBarOptions=
                       {{showLabel: false,
                         style: {
+                          ...Platform.select({
+                            ios: {
+                              height:responsiveScreenHeight(12),
+                            },
+                            android: {
+                              height:responsiveScreenHeight(8),
+                            }
+                          }),
                           position: 'absolute',
                           backgroundColor:"white",
-                          height:responsiveScreenHeight(8),
                           ...styles.shadow,
                           justifyContent: "center",
                           alignItems: "center",
@@ -294,11 +294,13 @@ export default () => {
                         backgroundColor="#4c29e6"
                         barStyle="light-content"
                       />
-                    <AuthStack.Navigator initalRouteName = "LoginScreen" screenOptions={{ headerStyle: { backgroundColor: '#fff',elevation:0, borderBottomWidth: 0} }}>
-                        <AuthStack.Screen name= "LoginScreen" component ={LoginScreen} options={{title: "Sign In", headerShown: false}}/>
+                    <AuthStack.Navigator initalRouteName = "WelcomeScreen" screenOptions={{ headerStyle: { backgroundColor: '#4c29e6',elevation:0, borderBottomWidth: 0}, headerTintColor: 'white', }}>
+                        <AuthStack.Screen name= "WelcomeScreen" component ={WelcomeScreen} options={{title: "", headerShown: false}}/>
+                        <AuthStack.Screen name= "LoginScreen" component ={LoginScreen} options={{title: ""}}/>
                         <AuthStack.Screen name= "CreateAccountScreen"  component ={CreateAccountScreen} options={{title: ""}} />
                         <AuthStack.Screen name= "ForgotPasswordScreen"  component ={ForgotPasswordScreen} options={{title: ""}} />
                         <AuthStack.Screen name="CameraScreenCreate" component={CameraScreenCreate} options={{title:""}}/>
+                        <AuthStack.Screen name="IntroSlider" component={IntroSlider} options={{title:"", headerShown: false}}/>
                     </AuthStack.Navigator>
                   </View>
                 )}

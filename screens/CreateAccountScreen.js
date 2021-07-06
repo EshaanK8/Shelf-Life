@@ -1,19 +1,15 @@
 import React, { useState } from 'react'
-import { Image, TextInput, TouchableOpacity, View, useWindowDimensions, StyleSheet } from 'react-native'
+import { Image, TextInput, Button, TouchableOpacity, View, KeyboardAvoidingView, useWindowDimensions, StyleSheet } from 'react-native'
 import { firebase } from '../src/firebase/config'
 import{AuthContext} from '../components/context'
-import LoadingScreen from './LoadingScreen'
 import profile from '../assets/profile.png'
 import AnimatedLoader from 'react-native-animated-loader';
 
-import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 import * as eva from '@eva-design/eva';
 
-import { default as theme } from '../custom-theme.json'; // <-- Import app theme
 import { default as mapping } from '../mapping.json'; // <-- Import app mapping
-
-import GradientButton from 'react-native-gradient-buttons';
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import {responsiveHeight,responsiveFontSize} from "react-native-responsive-dimensions";
 
 
 
@@ -28,6 +24,11 @@ export default function RegistrationScreen({navigation, route}) {
 
     const {signIn} = React.useContext(AuthContext) //Get the signIn function from the AuthContext
 
+    const AppButton = ({ onPress, title }) => (
+      <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
+        <Text style={styles.appButtonText}>{title}</Text>
+      </TouchableOpacity>
+    );
 
     const onFooterLinkPress = () => {
         navigation.navigate('LoginScreen')
@@ -62,7 +63,8 @@ export default function RegistrationScreen({navigation, route}) {
                   fullName,
                   photo
               };
-              signIn(data)
+              setIsLoading(false)
+              navigation.navigate("IntroSlider", {data})
               const usersRef = firebase.firestore().collection('users')
               usersRef
                   .doc(uid)
@@ -82,74 +84,78 @@ export default function RegistrationScreen({navigation, route}) {
 
     //Render Loading Screen
     if (isLoading) {
-        return <View style={{position:"absolute",top:0,bottom:0,left:0,right:0, alignItems: "center", justifyContent: "center"}}>
-          <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" source={require("../assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
+        return <View style={{position:"absolute",top:0,bottom:0,left:0,right:0, alignItems: "center", justifyContent: "center", backgroundColor: "#4c29e6"}}>
+          <AnimatedLoader visible={true} overlayColor="#4c29e6" source={require("../assets/loader.json")} animationStyle={{width: 80, height: 80}} speed={2}/>
         </View>
     }
 
     return (
     <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
-      <Layout style={[styles.container,{minHeight: Math.round(windowHeight)}]}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <Layout style={[styles.container,{minHeight: Math.round(windowHeight)}]}>
           <Layout style={styles.mainLayout} keyboardShouldPersistTaps="always">
 
               <View style={styles.welcomeView}>
                 <Text style ={styles.welcomeText}>Create Account</Text>
               </View>
 
-                <TouchableOpacity onPress={() => navigation.navigate("CameraScreenCreate")}>
-                    {((route.params)) ? (route.params.capturedImage && <Image source={{uri: route.params.capturedImage.uri}} style = {{width: responsiveHeight(8), height: responsiveHeight(8)}}/>) : (<Image source={profile} style = {{width: responsiveHeight(8), height: responsiveHeight(8)}}/>)}
+                <TouchableOpacity style={{marginTop:"8%"}} onPress={() => navigation.navigate("CameraScreenCreate")}>
+                    {((route.params)) ? (route.params.capturedImage && <Image source={{uri: route.params.capturedImage.uri}} style = {{width: responsiveHeight(12), height: responsiveHeight(12), borderRadius:50}}/>) : (<Image source={profile} style = {{width: responsiveHeight(12), height: responsiveHeight(12), borderRadius:50}}/>)}
                 </TouchableOpacity>
                 <TextInput
                     style={styles.fullNameInput}
                     placeholder='Full name'
-                    placeholderTextColor="#aaaaaa"
+                    placeholderTextColor="white"
                     onChangeText={(text) => setFullName(text)}
                     value={fullName}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
+                    color="white"
                 />
                 <TextInput
                     style={styles.emailInput}
-                    placeholderTextColor="#aaaaaa"
+                    placeholderTextColor="white"
                     placeholder='E-mail'
-                    onChangeText={(text) => setEmail(text)}
+                    onChangeText={(text) => setEmail(text.replace(/\s/g, ''))}
                     value={email}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
+                    color="white"
                 />
                 <TextInput
                     style={styles.passwordInput}
                     placeholder='Password'
                     secureTextEntry
-                    placeholderTextColor="#aaaaaa"
-                    onChangeText={(text) => setPassword(text)}
+                    placeholderTextColor="white"
+                    onChangeText={(text) => setPassword(text.replace(/\s/g, ''))}
                     value={password}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
+                    color="white"
                 />
                 <TextInput
                     style={styles.confirmPasswordInput}
-                    placeholderTextColor="#aaaaaa"
+                    placeholderTextColor="white"
                     secureTextEntry
                     placeholder='Confirm Password'
-                    onChangeText={(text) => setConfirmPassword(text)}
+                    onChangeText={(text) => setConfirmPassword(text.replace(/\s/g, ''))}
                     value={confirmPassword}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
+                    color="white"
                 />
             
                 
-                <GradientButton text="Create Account" width='90%' violetPink textStyle={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }} impact radius={10} height={responsiveHeight(5)} style={{marginTop:'15%', marginBottom:'2%',}} onPressAction={() => onRegisterPress()}/>
+                <AppButton title="Create Account" onPress={() => onRegisterPress()}/>
                 <View style={styles.createText}>
-                  <Text style={{fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Already have an account? </Text>
+                  <Text style={{fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular', color:"white"}}>Already have an account? </Text>
                   <TouchableOpacity onPress = {onFooterLinkPress}>
-                    <Text style={{color: '#b522f2'}}>Sign in</Text>
+                    <Text style={{color: '#FF0079', fontSize: responsiveFontSize(1.8),fontFamily: 'PTSans_400Regular'}}>Sign in</Text>
                   </TouchableOpacity>
                 </View>
-          </Layout>
-              
-          
+          </Layout>     
       </Layout>
+      </KeyboardAvoidingView>
     </ApplicationProvider>
   )
 }
@@ -161,47 +167,51 @@ const styles = StyleSheet.create({
       backgroundColor: '#F5FCFF'
     },
     fullNameInput: {
-      marginTop: '15%',
+      marginTop: '10%',
       height: 50,
       margin: 12,
       borderWidth: 1,
       borderRadius: 50,
       paddingLeft: 15,
       width: "90%",
-      borderColor: "lightgrey"
+      borderColor: "white"
     },
     passwordInput: {
+      fontFamily: 'PTSans_400Regular',
       height: 50,
       margin: 12,
       borderWidth: 1,
       borderRadius: 50,
       paddingLeft: 15,
       width: "90%",
-      borderColor: "lightgrey"
+      borderColor: "white"
     },
     emailInput: {
+      fontFamily: 'PTSans_400Regular',
         height: 50,
         margin: 12,
         borderWidth: 1,
         borderRadius: 50,
         paddingLeft: 15,
         width: "90%",
-        borderColor: "lightgrey"
+        borderColor: "white"
     },
     confirmPasswordInput: {
+        fontFamily: 'PTSans_400Regular',
         height: 50,
         margin: 12,
         borderWidth: 1,
         borderRadius: 50,
         paddingLeft: 15,
         width: "90%",
-        borderColor: "lightgrey"
+        borderColor: "white"
     },
 
     mainLayout: {
        flex: 1, 
        width: '100%',
-       alignItems: 'center'
+       alignItems: 'center',
+       backgroundColor: "#4c29e6"
     },
     createButton: {
       marginTop:'15%',
@@ -229,17 +239,30 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontWeight: "bold",
-    color: "black",
+    color: "white",
     fontSize: 25,
-    fontSize: responsiveFontSize(3),
-  fontFamily: 'PTSans_700Bold',
+    fontSize: responsiveFontSize(3.5),
+    fontFamily: 'PTSans_700Bold',
   },
   signInText: {
     fontWeight: "bold",
-    color: "lightgrey",
+    color: "white",
     fontSize: 20,
     marginTop: "1%"
   },
-  
+  appButtonContainer: {
+    backgroundColor: "#E100B2",
+    borderRadius: 30,
+    paddingVertical: "4%",
+    paddingHorizontal: "6%",
+    width:"70%",
+    marginTop:"10%"
+  },
+  appButtonText: {
+    fontSize: responsiveFontSize(2.2),
+    color: "#fff",
+    fontFamily: 'PTSans_700Bold',
+    alignSelf: "center",
+  }
   });
   

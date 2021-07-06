@@ -1,5 +1,5 @@
 import React, {Component, useState, useEffect} from 'react';
-import {StyleSheet,Text,View,Button, TouchableOpacity, TextInput, FlatList, Modal, ScrollView, Dimensions, Image} from 'react-native';
+import {StyleSheet,Text,View,Button, TouchableOpacity, TextInput, FlatList, Modal, ScrollView, useWindowDimensions, Dimensions, Image} from 'react-native';
 import {SearchBar} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,18 +10,16 @@ import BlurSearch from './BlurSearch';
 import {userContext} from '../components/userContext.js';
 import { firebase } from '../src/firebase/config'
 import { BlurView } from 'expo-blur';
-import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 import { useIsFocused } from "@react-navigation/native";
 //import {addProduct, getProducts, getUserFullData} from '../src/firebase/StorageApi'
 import AnimatedLoader from 'react-native-animated-loader';
-
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import {responsiveFontSize, responsiveScreenHeight} from "react-native-responsive-dimensions";
 import { Alert } from 'react-native';
+import AppIntroSlider from 'react-native-app-intro-slider';
 
 
 export default ({navigation, route}) => {
-  const AddFoodStack = createStackNavigator();
   const user = React.useContext(userContext)
   const [userFullData, setUserFullData] = useState([])
   const [productList, setProductList] = useState([]);
@@ -31,13 +29,9 @@ export default ({navigation, route}) => {
   const isFocused = useIsFocused();
   const [currentNavProduct, setCurrentNavProduct] = useState({uniqueId: "none"})
   const [isLoading, setIsLoading] = useState(false)
-
-  //Product Storage
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const [currentProductItem, setCurrentProductItem] = useState(null)
+  const windowHeight = useWindowDimensions().height;
 
   //Search Bar
-  const [error, setError] = useState(null)
   const [data, setData] = useState([])
   const [searchText, setSearchText] = useState("")
   const [searchBarToggle, setSearchBarToggle] = useState(false)
@@ -321,14 +315,23 @@ export default ({navigation, route}) => {
   }
 
   return (
-
-    <View style = {{marginTop: Constants.statusBarHeight, backgroundColor: "white", flex: 1}}>
+    <View style = {{marginTop: Constants.statusBarHeight, backgroundColor: "white", flex: 1, minHeight: Math.round(windowHeight)}}>
       
       {(isLoading) ? (
         <AnimatedLoader visible={visible} overlayColor="rgba(255,255,255,0.75)" animationStyle={{width: 100, height: 100, }} speed={1}/>
       ) 
       :(
         <FlatList
+          contentContainerStyle={{
+            ...Platform.select({
+              ios: {
+                paddingBottom:responsiveScreenHeight(12),
+              },
+              android: {
+                paddingBottom:responsiveScreenHeight(8),
+              }
+            })
+          }}
           ListHeaderComponent= {
           <View>
             <ScanContainer show = {!searchBarToggle}handleAddButton = {handleAddButton} handleSearchButton = {handleSearchButton} handleSettingsButton = {handleSettingsButton} fullName = {userFullData.fullName}/>

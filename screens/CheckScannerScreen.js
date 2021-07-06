@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import Constants from 'expo-constants'
-import ProductResult from './ProductResult'
 import { Alert } from 'react-native';
-import { Button, Text } from '@ui-kitten/components';
+import { Text } from '@ui-kitten/components';
 import {userContext} from '../components/userContext.js';
 import { firebase } from '../src/firebase/config'
 import GradientButton from 'react-native-gradient-buttons';
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import {responsiveHeight,responsiveFontSize} from "react-native-responsive-dimensions";
 import AnimatedLoader from 'react-native-animated-loader';
 
 export default ({navigation}) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState("");
   const [isLoading, setIsLoading] = useState("");
   const user = React.useContext(userContext)

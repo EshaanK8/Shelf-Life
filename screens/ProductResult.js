@@ -1,10 +1,7 @@
-import React, { Component, useState} from 'react';
-import {StyleSheet,View, TouchableOpacity, Alert, TextInput, useWindowDimensions, Dimensions, Animated, Image, ImageBackground} from 'react-native';
-import {responsiveHeight,responsiveWidth,responsiveFontSize, responsiveScreenHeight} from "react-native-responsive-dimensions";
+import React, {useState} from 'react';
+import {StyleSheet,View, TouchableOpacity, Alert, TextInput, useWindowDimensions, Image, ImageBackground} from 'react-native';
+import {responsiveHeight,responsiveFontSize} from "react-native-responsive-dimensions";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Constants from 'expo-constants';
-import { firebase } from '../src/firebase/config'
-import { useNavigation } from '@react-navigation/native';
 import { Button, Text } from '@ui-kitten/components';
 import diet from '../assets/diet.png'
 import background from '../assets/background.png'
@@ -13,8 +10,7 @@ import AnimatedLoader from 'react-native-animated-loader';
 export default ({ route, navigation }) => {
     const { product } = route.params;
     const windowHeight = useWindowDimensions().height;
-
-    var isHidden = true;
+    
     const [amount, setAmount] = useState(0)
 
     const [showConfirm, setShowConfirm] = useState(false)

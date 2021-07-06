@@ -1,17 +1,12 @@
-import React, { Component, useState, useEffect, useFocusEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import {StyleSheet,Text,View, TouchableOpacity,TextInput, Image, Modal, Alert, useWindowDimensions} from 'react-native';
 import {responsiveHeight,responsiveWidth,responsiveFontSize, responsiveScreenHeight} from "react-native-responsive-dimensions";
 import { Button } from '@ui-kitten/components';
-import InventoryScreen from './InventoryScreen'
-import { CommonActions } from '@react-navigation/native';
 import { firebase } from '../src/firebase/config'
-import LoadingScreen from './LoadingScreen'
 import{AuthContext} from '../components/context'
 import {userContext} from '../components/userContext.js';
 import profile from '../assets/profile.png'
-import GradientButton from 'react-native-gradient-buttons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { set } from 'react-native-reanimated';
 import AnimatedLoader from 'react-native-animated-loader';
 
 export default ({route, navigation}) => {
@@ -20,6 +15,12 @@ export default ({route, navigation}) => {
   const user = React.useContext(userContext)
   const [userFullData, setUserFullData] = useState([])
   const windowHeight = useWindowDimensions().height;
+
+  const AppButton = ({ onPress, title }) => (
+    <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
+      <Text style={styles.appButtonText}>{title}</Text>
+    </TouchableOpacity>
+  );
 
   const [email, setEmail] = useState()
   const [name, setName] = useState()
@@ -201,17 +202,17 @@ export default ({route, navigation}) => {
           <TextInput
             style={(!isLocked) ? styles.passwordInput : styles.passwordInputLocked}
             editable={!isLocked} 
-            onChangeText={(text) => setEmail(text)}
+            onChangeText={(text) => setEmail(text.replace(/\s/g, ''))}
             value={email}
             underlineColorAndroid="transparent"
             autoCapitalize="none"
           />
         </View>
         {!isLocked && <View style={styles.logoutBox}>
-          <Button status='success' style={{marginTop:"15%"}} onPress={handleSubmit}><Text style={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }}>Submit</Text></Button>
+          <Button status='success' style={{marginTop:"15%", borderRadius:30}} onPress={handleSubmit}><Text style={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }}>Submit</Text></Button>
         </View>}
         <View style={styles.logoutBox}>
-          <GradientButton text="Sign Out" width='90%' violetPink  textStyle={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }} impact radius={10} height={responsiveHeight(5)} style={{marginTop:'15%', marginBottom:'2%',}} onPressAction={() => {signOutG()}}/>
+          <AppButton title="Sign Out" onPress={() => {signOutG()}}/>
         </View>
 
         <Modal animationType="slide" visible={modalVisible} onRequestClose={() => {setModalVisible(!modalVisible)}}>
@@ -232,7 +233,7 @@ export default ({route, navigation}) => {
               <TextInput
                 style={styles.emailInput}  
                 placeholderTextColor="#aaaaaa"
-                onChangeText={(text) => setSignInEmail(text)}
+                onChangeText={(text) => setSignInEmail(text.replace(/\s/g, ''))}
                 value={signInEmail}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
@@ -241,14 +242,14 @@ export default ({route, navigation}) => {
               <TextInput
                 style={styles.passwordInput}
                 secureTextEntry
-                onChangeText={(text) => setSignInPassword(text)}
+                onChangeText={(text) => setSignInPassword(text.replace(/\s/g, ''))}
                 value={signInPassword}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
               />
             </View>
             <View style={styles.logoutBox}>
-              <GradientButton text="Authenticate" width='90%' violetPink  textStyle={{ fontSize: responsiveFontSize(2.1), fontFamily: 'PTSans_700Bold' }} impact radius={10} height={responsiveHeight(5)} style={{marginTop:'15%', marginBottom:'2%',}} onPressAction={handleLogin}/>
+              <AppButton title="Authenticate" onPress={handleLogin}/>
             </View>
           </View>
         </Modal>
@@ -383,7 +384,20 @@ const styles = StyleSheet.create({
   lockIconContainer: {
     alignSelf:'flex-end',
     marginRight:"5%"
+  },
+  appButtonContainer: {
+    backgroundColor: "#E100B2",
+    borderRadius: 30,
+    paddingVertical: "4%",
+    paddingHorizontal: "6%",
+    width:"70%",
+    marginTop:"10%"
+  },
+  appButtonText: {
+    fontSize: responsiveFontSize(2.2),
+    color: "#fff",
+    fontFamily: 'PTSans_700Bold',
+    alignSelf: "center",
   }
-
 });
 

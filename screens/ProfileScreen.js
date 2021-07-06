@@ -1,9 +1,7 @@
-import React, { Component, useState, useEffect, useFocusEffect} from 'react';
+import React from 'react';
 import {StyleSheet,Text,View,Button} from 'react-native';
-import InventoryScreen from './InventoryScreen'
 import { CommonActions } from '@react-navigation/native';
 import { firebase } from '../src/firebase/config'
-import LoadingScreen from './LoadingScreen'
 import{AuthContext} from '../components/context'
 import AnimatedLoader from 'react-native-animated-loader';
 

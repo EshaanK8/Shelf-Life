@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import {StyleSheet,Text,View,Button} from 'react-native';
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
 import BlurSearch from './BlurSearch'
 import AddProductScreen from './AddProductScreen'
 import {NavigationContainer} from '@react-navigation/native'

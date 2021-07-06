@@ -1,17 +1,13 @@
-import React, { Component, useState } from 'react';
-import {StyleSheet,View, TouchableOpacity, Dimensions, Animated, Image, ImageBackground} from 'react-native';
-import {responsiveHeight,responsiveWidth,responsiveFontSize, responsiveScreenHeight} from "react-native-responsive-dimensions";
+import React, { useState } from 'react';
+import {StyleSheet,View, TouchableOpacity,Image, ImageBackground} from 'react-native';
+import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Constants from 'expo-constants';
-import { firebase } from '../src/firebase/config'
-import { useNavigation } from '@react-navigation/native';
 import { Button, Text } from '@ui-kitten/components';
 import diet from '../assets/diet.png'
 import background from '../assets/background.png'
 
 export default (props) => {
-
-    var isHidden = true;
 
     const [showConfirm, setShowConfirm] = useState(false)
 

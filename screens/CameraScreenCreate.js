@@ -1,5 +1,5 @@
 import {StatusBar} from 'expo-status-bar'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, Image} from 'react-native'
 import {Camera} from 'expo-camera'
 export default ({ route, navigation }) => {
@@ -8,6 +8,7 @@ export default ({ route, navigation }) => {
   const [capturedImage, setCapturedImage] = React.useState(null)
   const [cameraType, setCameraType] = React.useState(Camera.Constants.Type.back)
   const [flashMode, setFlashMode] = React.useState('off')
+  const [hasPermission, setHasPermission] = useState(null);
 
   const __startCamera = async () => {
     const {status} = await Camera.requestPermissionsAsync()
@@ -51,6 +52,21 @@ export default ({ route, navigation }) => {
       setCameraType('back')
     }
   }
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  if (hasPermission === null) {
+    return <Text>Requesting for camera permission</Text>;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+
   return (
     <View style={styles.container}>
       {startCamera ? (

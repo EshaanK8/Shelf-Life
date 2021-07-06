@@ -1,10 +1,9 @@
-import React, {Component, useState} from 'react';
-import {StyleSheet,Text,View,Button, TouchableOpacity, Image, FlatList, ScrollView, Dimensions} from 'react-native';
+import React from 'react';
+import {StyleSheet,Text,View,TouchableOpacity, Image,Dimensions} from 'react-native';
 import Icon from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Constants from 'expo-constants';
 import { useNavigation } from '@react-navigation/native';
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import {responsiveHeight,responsiveFontSize} from "react-native-responsive-dimensions";
 import Collapsible from 'react-native-collapsible';
 import barcodeAdd from '../assets/barcode.png'
 import barcode from '../assets/barcode-3.png'

@@ -36,6 +36,7 @@
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz",
     "react-native-animated-loader": "^0.0.9",
+    "react-native-app-intro-slider": "^4.0.4",
     "react-native-bidirectional-infinite-scroll": "^0.3.3",
     "react-native-camera": "^3.44.1",
     "react-native-collapsible": "^1.6.0",

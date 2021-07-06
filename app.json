@@ -2,13 +2,14 @@
   "expo": {
     "name": "Shelf Life",
     "slug": "shelflife",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "primaryColor": "#4c29e6",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover",
+      "backgroundColor": "#4c29e6"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,13 +18,17 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eshaank.shelflife",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "backgroundColor": "#4c29e6"
+      },
+      "package": "com.eshaank.shelflife",
+      "versionCode": 3
     },
     "web": {
       "favicon": "./assets/favicon.png"

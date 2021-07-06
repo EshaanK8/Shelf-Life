@@ -1,14 +1,8 @@
-import React, {Component, useState, useEffect} from 'react';
-import { StyleSheet, View, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { Text, Card, Divider } from 'react-native-elements';
-import ItemsLeftPageScreen from '../screens/ItemsLeftPageScreen';
-import { useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useRoute} from '@react-navigation/native';
-import {userContext} from './userContext.js';
-import { firebase } from '../src/firebase/config'
+import React from 'react';
+import { StyleSheet, View, Image } from 'react-native';
+import { Text } from 'react-native-elements';
 import diet from '../assets/diet.png'
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
+import {responsiveHeight,responsiveFontSize} from "react-native-responsive-dimensions";
 
 
 export default (props) => {

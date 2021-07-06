@@ -1,19 +1,11 @@
-import React, { Component, useState } from 'react';
-import {StyleSheet,Text,View,Button, TouchableOpacity, Dimensions, Image, ImageBackground,} from 'react-native';
-import { useHeaderHeight } from '@react-navigation/stack';
-import {responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Constants from 'expo-constants';
-import { firebase } from '../src/firebase/config'
-import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import {StyleSheet,Text,View,Image, ImageBackground} from 'react-native';
+import {responsiveFontSize} from "react-native-responsive-dimensions";
 import diet from '../assets/diet.png'
-import splatter1 from '../assets/splatter1.png'
 import background from '../assets/background.png'
-import Svg, {Path} from 'react-native-svg';
 
 export default ({route, navigation}) => {
   const {item} = route.params;
-  const headerHeight = useHeaderHeight()
 
   const arrayToString = (array) => {
     let newString = ""
@@ -135,7 +127,6 @@ detailsContainer: {
   amountText: {
       fontSize: responsiveFontSize(2)
   },
-
   imageContainer: {
       flex:2,
       justifyContent: 'center',
@@ -174,7 +165,6 @@ detailsContainer: {
     fontSize: responsiveFontSize(2.5),
     fontFamily: 'PTSans_700Bold',
   },
-
   ingredients: {
     flex:1,
     padding:"5%",
@@ -187,19 +177,16 @@ detailsContainer: {
     borderRadius: 8,
     backgroundColor:"white"
   },
-
   ingredientsText: {
     fontSize: responsiveFontSize(1.5),
     fontFamily: 'PTSans_400Regular',
     color: "black"
   },
-
   allergensText: {
     fontSize: responsiveFontSize(1.5),
     fontFamily: 'PTSans_400Regular',
     color: "black"
   },
-
   detailsHeader: {
     fontSize: responsiveFontSize(2.5),
     fontFamily: 'PTSans_700Bold',
