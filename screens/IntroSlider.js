@@ -43,7 +43,7 @@ export default ({navigation, route}) => {
         <View style={{flex:0.4, width:"100%", alignItems:"center", paddingTop:"5%"}}>
           <Image source={item.image} style={styles.image} />
         </View>
-        <View style={{flex:0.3, paddingTop:"10%", paddingLeft:"5%", paddingRight:"5%"}}>
+        <View style={{flex:0.3, paddingTop:"5%", paddingLeft:"5%", paddingRight:"5%"}}>
           <Text style={styles.text}>{item.text}</Text>
         </View>
       </View>

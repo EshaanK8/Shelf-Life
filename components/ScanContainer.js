@@ -18,7 +18,7 @@ export default (props) => {
         <View>
           <View style={styles.bigTitleContainer}>
             <View style={styles.bigSmallTitleContainer}>
-              <Text style={styles.bigTitle}>Welcome, {props.fullName} 👋</Text>
+              <Text style={styles.bigTitle} numberOfLines = {1}>Welcome, {props.fullName} 👋</Text>
             </View>
             <View style = {styles.settingsContainer}>
               <TouchableOpacity onPress={props.handleSettingsButton}>
