@@ -1,4 +1,4 @@
-# Shelf-Life (iOS/Android)
+# Shelf-Life (iOS/Android)- Built with React Native
 
 Google Play Store: https://play.google.com/store/apps/details?id=com.eshaank.shelflife
 
