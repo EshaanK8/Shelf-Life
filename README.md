@@ -1,4 +1,6 @@
-# Shelf-Life
+# Shelf-Life (iOS/Android)
+
+Google Play Store: https://play.google.com/store/apps/details?id=com.eshaank.shelflife
 
 Avoid wasting food and overspending on groceries!  
   
@@ -12,3 +14,5 @@ Adding an item to your home inventory is just as easy! Simply scan the barcode o
 * Quick search tool helps finds your product in seconds  
 * Store all of your previously bought items for easy re-addition to your pantry  
 * Makes use of the largest open database of food products in the world, with over 1 million products worldwide (https://ca.openfoodfacts.org)
+
+
