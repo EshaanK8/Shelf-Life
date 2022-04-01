@@ -16,6 +16,6 @@ Adding an item to your home inventory is just as easy! Simply scan the barcode o
 * Makes use of the largest open database of food products in the world, with over 1 million products worldwide (https://ca.openfoodfacts.org)
 
 <p float="left">
-  <img width="100" alt="Untitled (700 × 1080 px)" src="https://user-images.githubusercontent.com/64331800/161179325-bc81bf41-0903-4d64-9fcb-66c1c6805614.png">
-    <img width="100" alt="Untitled (700 × 1080 px)" src="https://user-images.githubusercontent.com/64331800/161179325-bc81bf41-0903-4d64-9fcb-66c1c6805614.png">
+  <img width="400" alt="Untitled (700 × 1080 px)" src="https://user-images.githubusercontent.com/64331800/161179325-bc81bf41-0903-4d64-9fcb-66c1c6805614.png">
+    <img width="400" alt="Untitled (700 × 1080 px)" src="https://user-images.githubusercontent.com/64331800/161179325-bc81bf41-0903-4d64-9fcb-66c1c6805614.png">
 </p>
