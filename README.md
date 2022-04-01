@@ -17,3 +17,5 @@ Adding an item to your home inventory is just as easy! Simply scan the barcode o
 
 
 <img width="525" alt="Untitled (700 × 1080 px)" src="https://user-images.githubusercontent.com/64331800/161179325-bc81bf41-0903-4d64-9fcb-66c1c6805614.png">
+
+<img width="525" alt="Untitled (700 × 1080 px)" src="https://user-images.githubusercontent.com/64331800/161179325-bc81bf41-0903-4d64-9fcb-66c1c6805614.png">
